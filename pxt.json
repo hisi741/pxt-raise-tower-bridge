@@ -1,0 +1,21 @@
+{
+    "name": "raise-tower-bridge",
+    "version": "0.0.1",
+    "description": "MakeCode blocks for a Tower Bridge micro:bit workshop.",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*",
+        "microphone": "*"
+    },
+    "files": [
+        "main.ts",
+        "README.md"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "public": true,
+    "supportedTargets": [
+        "microbit"
+    ]
+}
