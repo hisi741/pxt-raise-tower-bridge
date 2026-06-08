@@ -1,10 +1,10 @@
 ; Interface tables: 0/0 (NaN%)
 ; Virtual methods: 0 / 0
-; generated code sizes (bytes): 5452 (incl. 3290 user, 728 helpers, 14 vtables, 1420 lits); src size 0
-; assembly: 3274 lines; density: 47.68 bytes/stmt; (69 stmts)
-; total bytes: 296268 (62.9% of 460.0k flash with 174772 free)
-; peep hole pass: 29 instructions removed and 128 updated
-; peep hole pass: 13 instructions removed and 0 updated
+; generated code sizes (bytes): 2296 (incl. 1566 user, 674 helpers, 12 vtables, 44 lits); src size 0
+; assembly: 1739 lines; density: 104.4 bytes/stmt; (15 stmts)
+; total bytes: 293112 (62.2% of 460.0k flash with 177928 free)
+; peep hole pass: 24 instructions removed and 31 updated
+; peep hole pass: 8 instructions removed and 0 updated
 ; peep hole pass: 0 instructions removed and 0 updated
 
 
@@ -13,7 +13,7 @@
     .hex 708E3B92C615A841C49866C975EE5197 ; magic number
     .hex 8E5C074605BCEA5D ; hex template hash
     .hex 873266330af9dbdb ; replaced in binary by program hash
-    .short 4   ; num. globals
+    .short 3   ; num. globals
     .short 0 ; patched with number of 64 bit words resulting from assembly
     .word _pxt_config_data
     .short 0 ; patched with comm section size
@@ -22,7 +22,7 @@
     .word _pxt_lambda_trampoline@fn
     .word _pxt_perf_counters
     .word _pxt_restore_exception_state@fn
-    .word _str46 ; name
+    .word _str0 ; name
     ;
 ; Function main.ts(1,1): <main>
     ;
@@ -52,20 +52,37 @@ _main___P1_locals:
     ldr r7, [r6, #0]
     str r0, [r7, #8]
     @stackempty locals
-    bl towerBridge_trafficGreen__P837
-_proccall47:
+    bl towerBridge_raiseLeftBascule__P837
+_proccall1:
     @stackempty locals
-    ldr r0, _ldlit_2 ; inline__P840_Lit      
+    bl towerBridge_raiseRightBascule__P839
+_proccall2:
+    @stackempty locals
+    bl towerBridge_lowerLeftBascule__P841
+_proccall3:
+    @stackempty locals
+    bl towerBridge_lowerRightBascule__P843
+_proccall4:
+    @stackempty locals
+    movs r0, #91
+    push {r0} ; proc-arg
+    bl towerBridge_setLeftBasculeTo__P845
+_proccall5:
+    add sp, #4*1 ; pop locals 1
+    @stackempty locals
+    movs r0, #91
+    push {r0} ; proc-arg
+    bl towerBridge_setRightBasculeTo__P847
+_proccall6:
+    add sp, #4*1 ; pop locals 1
+    @stackempty locals
+    ldr r0, _ldlit_2 ; inline__P850_Lit      
     push {r0} ; proc-arg
     bl _conv_1
     mov r7, sp
     str r7, [r6, #4]
     bl basic::forever
     add sp, #4*1 ; pop locals 1
-    @stackempty locals
-    movs r0, #3
-    ldr r7, [r6, #0]
-    str r0, [r7, #12]
     @stackempty locals
 .ret.1:
     @stackempty locals
@@ -77,1200 +94,203 @@ _main___P1_end:
     @stackempty args
 ; endfun
     ;
-; Function test.ts(3,15): inline
+; Function test.ts(8,15): inline
     ;
-    .object inline__P840 "test.ts(3,15): inline"
-inline__P840_pre:
+    .object inline__P850 "test.ts(8,15): inline"
+inline__P850_pre:
     .section code
     .balign 4
-inline__P840_Lit:
+inline__P850_Lit:
     .word pxt::RefAction_vtable
     .short 0, 0 ; no captured vars
-    .word inline__P840_args@fn
-inline__P840_args:
+    .word inline__P850_args@fn
+inline__P850_args:
     .section code
-inline__P840:
-inline__P840_nochk:
+inline__P850:
+inline__P850_nochk:
     @stackmark func
     @stackmark args
     push {lr}
 .locals:
     @stackmark locals
-inline__P840_locals:
-    bl towerBridge_boatDetected__P842
-_proccall49:
+inline__P850_locals:
+    movs r0, #10
     mov r7, sp
     str r7, [r6, #4]
     bl numops::toBoolDecr
     cmp r0, #0
     beq .else_0_2      
-.jmpz48:
-    bl towerBridge_trafficRed__P844
-_proccall50:
+.jmpz7:
+    bl towerBridge_raiseLeftBascule__P837
+_proccall8:
     @stackempty locals
-    bl towerBridge_raiseBridge__P846
-_proccall51:
+    bl towerBridge_raiseRightBascule__P839
+_proccall9:
     @stackempty locals
     b .afterif_1_2      
 .else_0_2:
-    bl towerBridge_lowerBridge__P848
-_proccall52:
+    bl towerBridge_lowerLeftBascule__P841
+_proccall10:
     @stackempty locals
-    bl towerBridge_trafficGreen__P837
-_proccall53:
+    bl towerBridge_lowerRightBascule__P843
+_proccall11:
     @stackempty locals
 .afterif_1_2:
-.ret.840:
+.ret.850:
     @stackempty locals
     movs r0, #0
 .final_2_2:
-inline__P840_end:
+inline__P850_end:
     pop {pc}
     @stackempty func
     @stackempty args
 ; endfun
     ;
-; Function main.ts(63,5): towerBridge.lowerBridge
+; Function main.ts(66,5): towerBridge.setRightBasculeTo
     ;
-    .object towerBridge_lowerBridge__P848 "main.ts(63,5): towerBridge.lowerBridge"
-towerBridge_lowerBridge__P848_pre:
+    .object towerBridge_setRightBasculeTo__P847 "main.ts(66,5): towerBridge.setRightBasculeTo"
+towerBridge_setRightBasculeTo__P847_pre:
     .section code
     .balign 4
     .section code
-towerBridge_lowerBridge__P848:
-towerBridge_lowerBridge__P848_nochk:
+towerBridge_setRightBasculeTo__P847:
+towerBridge_setRightBasculeTo__P847_nochk:
     @stackmark func
     @stackmark args
     push {lr}
 .locals:
     @stackmark locals
-towerBridge_lowerBridge__P848_locals:
-    movs r0, #3
-    push {r0} ; proc-arg
-    bl towerBridge_setBridgePosition__P854
-_proccall54:
-    add sp, #4*1 ; pop locals 1
-    @stackempty locals
-.ret.848:
-    @stackempty locals
-    movs r0, #0
-.final_0_3:
-towerBridge_lowerBridge__P848_end:
-    pop {pc}
-    @stackempty func
-    @stackempty args
-; endfun
-    ;
-; Function main.ts(40,5): towerBridge.setBridgePosition
-    ;
-    .object towerBridge_setBridgePosition__P854 "main.ts(40,5): towerBridge.setBridgePosition"
-towerBridge_setBridgePosition__P854_pre:
-    .section code
-    .balign 4
-    .section code
-towerBridge_setBridgePosition__P854:
-towerBridge_setBridgePosition__P854_nochk:
-    @stackmark func
-    @stackmark args
-    push {lr}
-.locals:
-    @stackmark locals
-towerBridge_setBridgePosition__P854_locals:
-    ldr r0, [sp, args@0]
-    ldr r7, [r6, #0]
-    str r0, [r7, #12]
-    @stackempty locals
-    ldr r0, [sp, args@0]
-    push {r0} ; proc-arg
-    bl towerBridge_showPosition__P853
-_proccall55:
-    add sp, #4*1 ; pop locals 1
-    @stackempty locals
-.ret.854:
+towerBridge_setRightBasculeTo__P847_locals:
+.ret.847:
     @stackempty locals
     movs r0, #0
 .final_0_4:
-towerBridge_setBridgePosition__P854_end:
+towerBridge_setRightBasculeTo__P847_end:
     pop {pc}
     @stackempty func
     @stackempty args
 ; endfun
     ;
-; Function main.ts(20,5): towerBridge.showPosition
+; Function main.ts(54,5): towerBridge.setLeftBasculeTo
     ;
-    .object towerBridge_showPosition__P853 "main.ts(20,5): towerBridge.showPosition"
-towerBridge_showPosition__P853_pre:
+    .object towerBridge_setLeftBasculeTo__P845 "main.ts(54,5): towerBridge.setLeftBasculeTo"
+towerBridge_setLeftBasculeTo__P845_pre:
     .section code
     .balign 4
     .section code
-towerBridge_showPosition__P853:
-towerBridge_showPosition__P853_nochk:
+towerBridge_setLeftBasculeTo__P845:
+towerBridge_setLeftBasculeTo__P845_nochk:
     @stackmark func
     @stackmark args
     push {lr}
 .locals:
     @stackmark locals
-towerBridge_showPosition__P853_locals:
-    ldr r0, [sp, args@0]
-    movs r1, #1
-    bl _cmp_eq
-    beq .else_0_5      
-.jmpz56:
-    ldr r0, _ldlit_3 ; _str42      
-    movs r1, #150
-    mov r7, sp
-    str r7, [r6, #4]
-    bl basic::showString
-    @stackempty locals
-    b .afterif_1_5      
-.else_0_5:
-    ldr r0, [sp, args@0]
-    movs r1, #3
-    bl _cmp_eq
-    beq .else_2_5      
-.jmpz57:
-    ldr r0, _ldlit_4 ; _str43      
-    movs r1, #150
-    mov r7, sp
-    str r7, [r6, #4]
-    bl basic::showString
-    @stackempty locals
-    b .afterif_3_5      
-.else_2_5:
-    ldr r0, [sp, args@0]
-    movs r1, #5
-    bl _cmp_eq
-    beq .else_4_5      
-.jmpz58:
-    ldr r0, _ldlit_5 ; _str44      
-    movs r1, #150
-    mov r7, sp
-    str r7, [r6, #4]
-    bl basic::showString
-    @stackempty locals
-    b .afterif_5_5      
-.else_4_5:
-    ldr r0, _ldlit_6 ; _str45      
-    movs r1, #150
-    mov r7, sp
-    str r7, [r6, #4]
-    bl basic::showString
-    @stackempty locals
-.afterif_5_5:
-.afterif_3_5:
-.afterif_1_5:
-.ret.853:
+towerBridge_setLeftBasculeTo__P845_locals:
+.ret.845:
     @stackempty locals
     movs r0, #0
-.final_6_5:
-towerBridge_showPosition__P853_end:
+.final_0_5:
+towerBridge_setLeftBasculeTo__P845_end:
     pop {pc}
     @stackempty func
     @stackempty args
 ; endfun
     ;
-; Function main.ts(52,5): towerBridge.raiseBridge
+; Function main.ts(42,5): towerBridge.lowerRightBascule
     ;
-    .object towerBridge_raiseBridge__P846 "main.ts(52,5): towerBridge.raiseBridge"
-towerBridge_raiseBridge__P846_pre:
+    .object towerBridge_lowerRightBascule__P843 "main.ts(42,5): towerBridge.lowerRightBascule"
+towerBridge_lowerRightBascule__P843_pre:
     .section code
     .balign 4
     .section code
-towerBridge_raiseBridge__P846:
-towerBridge_raiseBridge__P846_nochk:
+towerBridge_lowerRightBascule__P843:
+towerBridge_lowerRightBascule__P843_nochk:
     @stackmark func
     @stackmark args
     push {lr}
 .locals:
     @stackmark locals
-towerBridge_raiseBridge__P846_locals:
-    movs r0, #7
-    push {r0} ; proc-arg
-    bl towerBridge_setBridgePosition__P854
-_proccall59:
-    add sp, #4*1 ; pop locals 1
-    @stackempty locals
-.ret.846:
+towerBridge_lowerRightBascule__P843_locals:
+.ret.843:
     @stackempty locals
     movs r0, #0
 .final_0_6:
-towerBridge_raiseBridge__P846_end:
+towerBridge_lowerRightBascule__P843_end:
     pop {pc}
     @stackempty func
     @stackempty args
 ; endfun
     ;
-; Function main.ts(86,5): towerBridge.trafficRed
+; Function main.ts(32,5): towerBridge.lowerLeftBascule
     ;
-    .object towerBridge_trafficRed__P844 "main.ts(86,5): towerBridge.trafficRed"
-towerBridge_trafficRed__P844_pre:
+    .object towerBridge_lowerLeftBascule__P841 "main.ts(32,5): towerBridge.lowerLeftBascule"
+towerBridge_lowerLeftBascule__P841_pre:
     .section code
     .balign 4
     .section code
-towerBridge_trafficRed__P844:
-towerBridge_trafficRed__P844_nochk:
+towerBridge_lowerLeftBascule__P841:
+towerBridge_lowerLeftBascule__P841_nochk:
     @stackmark func
     @stackmark args
     push {lr}
 .locals:
     @stackmark locals
-towerBridge_trafficRed__P844_locals:
-    movs r0, #4
-    lsls r0, r0, #8
-    adds r0, #177
-    push {r0} ; proc-arg
-    movs r0, #7
-    push {r0} ; proc-arg
-    bl basic_showIcon__P383
-_proccall60:
-    add sp, #4*2 ; pop locals 2
-    @stackempty locals
-.ret.844:
+towerBridge_lowerLeftBascule__P841_locals:
+.ret.841:
     @stackempty locals
     movs r0, #0
 .final_0_7:
-towerBridge_trafficRed__P844_end:
+towerBridge_lowerLeftBascule__P841_end:
     pop {pc}
     @stackempty func
     @stackempty args
 ; endfun
     ;
-; Function core/icons.ts(190,5): basic.showIcon
+; Function main.ts(22,5): towerBridge.raiseRightBascule
     ;
-    .object basic_showIcon__P383 "core/icons.ts(190,5): basic.showIcon"
-basic_showIcon__P383_pre:
+    .object towerBridge_raiseRightBascule__P839 "main.ts(22,5): towerBridge.raiseRightBascule"
+towerBridge_raiseRightBascule__P839_pre:
     .section code
     .balign 4
     .section code
-basic_showIcon__P383:
-basic_showIcon__P383_nochk:
+towerBridge_raiseRightBascule__P839:
+towerBridge_raiseRightBascule__P839_nochk:
     @stackmark func
     @stackmark args
     push {lr}
 .locals:
-    movs r0, #0
-    push {r0} ;loc
     @stackmark locals
-basic_showIcon__P383_locals:
-    ldr r0, [sp, args@0]
-    push {r0} ; proc-arg
-    bl images_iconImage__P386
-_proccall61:
-    add sp, #4*1 ; pop locals 1
-    str r0, [sp, locals@0]
-    @stackempty locals
-    ldr r0, [sp, locals@0]
-    push {r0} ; proc-arg
-    ldr r0, [sp, args@1]
-    push {r0} ; proc-arg
-    bl _conv_3
-    movs r1, #0
-    mov r7, sp
-    str r7, [r6, #4]
-    bl ImageMethods::showImage
-    add sp, #4*2 ; pop locals 2
-    @stackempty locals
-.ret.383:
+towerBridge_raiseRightBascule__P839_locals:
+.ret.839:
     @stackempty locals
     movs r0, #0
 .final_0_8:
-    add sp, #4*1 ; pop locals 1
-basic_showIcon__P383_end:
+towerBridge_raiseRightBascule__P839_end:
     pop {pc}
     @stackempty func
     @stackempty args
 ; endfun
     ;
-; Function core/icons.ts(285,5): images.iconImage
+; Function main.ts(12,5): towerBridge.raiseLeftBascule
     ;
-    .object images_iconImage__P386 "core/icons.ts(285,5): images.iconImage"
-images_iconImage__P386_pre:
+    .object towerBridge_raiseLeftBascule__P837 "main.ts(12,5): towerBridge.raiseLeftBascule"
+towerBridge_raiseLeftBascule__P837_pre:
     .section code
     .balign 4
     .section code
-images_iconImage__P386:
-images_iconImage__P386_nochk:
+towerBridge_raiseLeftBascule__P837:
+towerBridge_raiseLeftBascule__P837_nochk:
     @stackmark func
     @stackmark args
     push {lr}
 .locals:
     @stackmark locals
-images_iconImage__P386_locals:
-    ldr r0, [sp, args@0]
-    push {r0}; tmpstore @1
-    mov r1, r0
-    movs r0, #1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz62
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_0_9      
-.jmpz62:
-    movs r0, #3
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz63
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_1_9      
-.jmpz63:
-    movs r0, #9
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz64
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_2_9      
-.jmpz64:
-    movs r0, #11
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz65
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_3_9      
-.jmpz65:
-    movs r0, #13
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz66
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_4_9      
-.jmpz66:
-    movs r0, #15
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz67
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_5_9      
-.jmpz67:
-    movs r0, #17
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz68
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_6_9      
-.jmpz68:
-    movs r0, #19
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz69
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_7_9      
-.jmpz69:
-    movs r0, #21
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz70
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_8_9      
-.jmpz70:
-    movs r0, #23
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz71
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_9_9      
-.jmpz71:
-    movs r0, #25
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz72
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_10_9      
-.jmpz72:
-    movs r0, #5
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz73
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_11_9      
-.jmpz73:
-    movs r0, #7
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz74
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_12_9      
-.jmpz74:
-    movs r0, #67
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz75
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_13_9      
-.jmpz75:
-    movs r0, #69
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz76
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_14_9      
-.jmpz76:
-    movs r0, #71
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz77
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_15_9      
-.jmpz77:
-    movs r0, #73
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz78
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_16_9      
-.jmpz78:
-    movs r0, #75
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz79
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_17_9      
-.jmpz79:
-    movs r0, #77
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz80
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_18_9      
-.jmpz80:
-    movs r0, #79
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz81
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_19_9      
-.jmpz81:
-    movs r0, #81
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz82
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_20_9      
-.jmpz82:
-    movs r0, #27
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz83
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_21_9      
-.jmpz83:
-    movs r0, #29
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz84
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_22_9      
-.jmpz84:
-    movs r0, #31
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz85
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_23_9      
-.object PUSH
-.balign 4
-_ldlit_2:
- .word inline__P840_Lit
-_ldlit_3:
- .word _str42
-_ldlit_4:
- .word _str43
-_ldlit_5:
- .word _str44
-_ldlit_6:
- .word _str45
-.object POP
-.jmpz85:
-    movs r0, #33
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz86
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_24_9      
-.jmpz86:
-    movs r0, #35
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz87
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_25_9      
-.jmpz87:
-    movs r0, #37
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz88
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_26_9      
-.jmpz88:
-    movs r0, #39
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz89
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_27_9      
-.jmpz89:
-    movs r0, #41
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz90
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_28_9      
-.jmpz90:
-    movs r0, #43
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz91
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_29_9      
-.jmpz91:
-    movs r0, #45
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz92
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_30_9      
-.jmpz92:
-    movs r0, #47
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz93
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_31_9      
-.jmpz93:
-    movs r0, #49
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz94
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_32_9      
-.jmpz94:
-    movs r0, #51
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz95
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_33_9      
-.jmpz95:
-    movs r0, #53
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz96
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_34_9      
-.jmpz96:
-    movs r0, #55
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz97
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_35_9      
-.jmpz97:
-    movs r0, #57
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz98
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_36_9      
-.jmpz98:
-    movs r0, #61
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz99
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_37_9      
-.jmpz99:
-    movs r0, #59
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz100
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_38_9      
-.jmpz100:
-    movs r0, #63
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz101
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_39_9      
-.jmpz101:
-    movs r0, #65
-    ldr r1, [sp, #4*0] ; tmpref @1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::switch_eq
-    cmp r0, #0
-    beq .jmpz102
-    @dummystack 1
-    add sp, #4*1 ; pop locals 1
-    b .switch_40_9      
-.jmpz102:
-    pop {r0} ; tmpref @1
-    b .switch_41_9      
-.switch_0_9:
-    ldr r0, _ldlit_8 ; _img0      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_1_9:
-    ldr r0, _ldlit_9 ; _img1      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_2_9:
-    ldr r0, _ldlit_10 ; _img2      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_3_9:
-    ldr r0, _ldlit_11 ; _img3      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_4_9:
-    ldr r0, _ldlit_12 ; _img4      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_5_9:
-    ldr r0, _ldlit_13 ; _img5      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_6_9:
-    ldr r0, _ldlit_14 ; _img6      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_7_9:
-    ldr r0, _ldlit_15 ; _img7      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_8_9:
-    ldr r0, _ldlit_16 ; _img8      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_9_9:
-    ldr r0, _ldlit_17 ; _img9      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_10_9:
-    ldr r0, _ldlit_18 ; _img10      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_11_9:
-    ldr r0, _ldlit_19 ; _img11      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_12_9:
-    ldr r0, _ldlit_20 ; _img12      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_13_9:
-    ldr r0, _ldlit_21 ; _img13      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_14_9:
-    ldr r0, _ldlit_22 ; _img14      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_15_9:
-    ldr r0, _ldlit_23 ; _img15      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_16_9:
-    ldr r0, _ldlit_24 ; _img16      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_17_9:
-    ldr r0, _ldlit_25 ; _img17      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_18_9:
-    ldr r0, _ldlit_26 ; _img18      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_19_9:
-    ldr r0, _ldlit_27 ; _img19      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_20_9:
-    ldr r0, _ldlit_28 ; _img20      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_21_9:
-    ldr r0, _ldlit_29 ; _img21      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_22_9:
-    ldr r0, _ldlit_30 ; _img22      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_23_9:
-    ldr r0, _ldlit_31 ; _img23      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_24_9:
-    ldr r0, _ldlit_32 ; _img24      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_25_9:
-    ldr r0, _ldlit_33 ; _img25      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_26_9:
-    ldr r0, _ldlit_34 ; _img26      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_27_9:
-    ldr r0, _ldlit_35 ; _img27      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_28_9:
-    ldr r0, _ldlit_36 ; _img28      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_29_9:
-    ldr r0, _ldlit_37 ; _img29      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_30_9:
-    ldr r0, _ldlit_38 ; _img30      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_31_9:
-    ldr r0, _ldlit_39 ; _img31      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_32_9:
-    ldr r0, _ldlit_40 ; _img32      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_33_9:
-    ldr r0, _ldlit_41 ; _img33      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_34_9:
-    ldr r0, _ldlit_42 ; _img34      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_35_9:
-    ldr r0, _ldlit_43 ; _img35      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_36_9:
-    ldr r0, _ldlit_44 ; _img36      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_37_9:
-    ldr r0, _ldlit_45 ; _img37      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_38_9:
-    ldr r0, _ldlit_46 ; _img38      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_39_9:
-    ldr r0, _ldlit_47 ; _img39      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.object PUSH
-.balign 4
-_ldlit_8:
- .word _img0
-_ldlit_9:
- .word _img1
-_ldlit_10:
- .word _img2
-_ldlit_11:
- .word _img3
-_ldlit_12:
- .word _img4
-_ldlit_13:
- .word _img5
-_ldlit_14:
- .word _img6
-_ldlit_15:
- .word _img7
-_ldlit_16:
- .word _img8
-_ldlit_17:
- .word _img9
-_ldlit_18:
- .word _img10
-_ldlit_19:
- .word _img11
-_ldlit_20:
- .word _img12
-_ldlit_21:
- .word _img13
-_ldlit_22:
- .word _img14
-_ldlit_23:
- .word _img15
-_ldlit_24:
- .word _img16
-_ldlit_25:
- .word _img17
-_ldlit_26:
- .word _img18
-_ldlit_27:
- .word _img19
-_ldlit_28:
- .word _img20
-_ldlit_29:
- .word _img21
-_ldlit_30:
- .word _img22
-_ldlit_31:
- .word _img23
-_ldlit_32:
- .word _img24
-_ldlit_33:
- .word _img25
-_ldlit_34:
- .word _img26
-_ldlit_35:
- .word _img27
-_ldlit_36:
- .word _img28
-_ldlit_37:
- .word _img29
-_ldlit_38:
- .word _img30
-_ldlit_39:
- .word _img31
-_ldlit_40:
- .word _img32
-_ldlit_41:
- .word _img33
-_ldlit_42:
- .word _img34
-_ldlit_43:
- .word _img35
-_ldlit_44:
- .word _img36
-_ldlit_45:
- .word _img37
-_ldlit_46:
- .word _img38
-_ldlit_47:
- .word _img39
-.object POP
-.switch_40_9:
-    ldr r0, _ldlit_49 ; _img40      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.switch_41_9:
-    ldr r0, _ldlit_50 ; _img41      
-    mov r7, sp
-    str r7, [r6, #4]
-    bl images::createImage
-    b .ret.386      
-.brk.906:
-    movs r0, #0
-.ret.386:
-    @stackempty locals
-.final_42_9:
-images_iconImage__P386_end:
-    pop {pc}
-    @stackempty func
-    @stackempty args
-; endfun
-    ;
-; Function main.ts(75,5): towerBridge.boatDetected
-    ;
-    .object towerBridge_boatDetected__P842 "main.ts(75,5): towerBridge.boatDetected"
-towerBridge_boatDetected__P842_pre:
-    .section code
-    .balign 4
-    .section code
-towerBridge_boatDetected__P842:
-towerBridge_boatDetected__P842_nochk:
-    @stackmark func
-    @stackmark args
-    push {lr}
-.locals:
-    @stackmark locals
-towerBridge_boatDetected__P842_locals:
-    movs r0, #1
-    mov r7, sp
-    str r7, [r6, #4]
-    bl input::buttonIsPressed
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::fromBool
-.ret.842:
-    @stackempty locals
-.final_0_10:
-towerBridge_boatDetected__P842_end:
-    pop {pc}
-    @stackempty func
-    @stackempty args
-; endfun
-    ;
-; Function main.ts(97,5): towerBridge.trafficGreen
-    ;
-    .object towerBridge_trafficGreen__P837 "main.ts(97,5): towerBridge.trafficGreen"
-towerBridge_trafficGreen__P837_pre:
-    .section code
-    .balign 4
-    .section code
-towerBridge_trafficGreen__P837:
-towerBridge_trafficGreen__P837_nochk:
-    @stackmark func
-    @stackmark args
-    push {lr}
-.locals:
-    @stackmark locals
-towerBridge_trafficGreen__P837_locals:
-    movs r0, #4
-    lsls r0, r0, #8
-    adds r0, #177
-    push {r0} ; proc-arg
-    movs r0, #5
-    push {r0} ; proc-arg
-    bl basic_showIcon__P383
-_proccall103:
-    add sp, #4*2 ; pop locals 2
-    @stackempty locals
+towerBridge_raiseLeftBascule__P837_locals:
 .ret.837:
     @stackempty locals
     movs r0, #0
-.final_0_11:
-towerBridge_trafficGreen__P837_end:
+.final_0_9:
+towerBridge_raiseLeftBascule__P837_end:
     pop {pc}
     @stackempty func
     @stackempty args
@@ -1677,10 +697,8 @@ _pxt_map_set:
     b .fail2
 .object PUSH
 .balign 4
-_ldlit_49:
- .word _img40
-_ldlit_50:
- .word _img41
+_ldlit_2:
+ .word inline__P850_Lit
 .object POP
 .hit:
     adds r3, r3, r2 ; r3-descriptor
@@ -1713,7 +731,7 @@ _ldlit_50:
 _pxt_bind_helper:
     push {r0, r2}
     movs r0, #2
-    ldr r1, _ldlit_52 ; _pxt_bind_lit      
+    ldr r1, _ldlit_4 ; _pxt_bind_lit      
     mov r7, sp
     str r7, [r6, #4]
     bl pxt::mkAction
@@ -1730,7 +748,7 @@ _pxt_bind_lit:
     cmp r4, #12
     bge .fail
     lsls r3, r4, #2
-    ldr r2, _ldlit_53 ; _pxt_copy_list      
+    ldr r2, _ldlit_5 ; _pxt_copy_list      
     ldr r1, [r2, r3]
     ldr r3, [r0, #12]
     ldr r2, [r0, #16]
@@ -2022,41 +1040,6 @@ _conv_1:
     bl _inst_builtin4_validate_0
     pop {pc}
     @stackempty args
-    .section code
-    .object _code_helper__inst_builtin9_validate_2
-_inst_builtin9_validate_2:
-    lsls r2, r0, #30
-    bne .fail
-    cmp r0, #0
-    beq .fail
-    ldr r3, [r0, #0]
-; vtable in R3
-    ldrh r2, [r3, #8]
-    cmp r2, #9
-    bne .fail
-    bx lr
-.fail:
-    mov r1, lr
-    mov r7, sp
-    str r7, [r6, #4]
-    bl pxt::failedCast
-    .section code
-    .object _code_helper__conv_3
-_conv_3:
-    @stackmark args
-    push {lr}
-    ldr r0, [sp, #4*2] ; estack
-    bl _inst_builtin9_validate_2
-    push {r0}
-    ldr r0, [sp, #4*2] ; estack
-    asrs r0, r0, #1
-    bcs .isint2
-    lsls r0, r0, #1
-    bl _numops_toInt
-.isint2:
-    mov r2, r0      
-    pop {r0, pc}      
-    @stackempty args
 _numops_adds:
     @scope _numops_adds
     lsls r2, r0, #31
@@ -2165,13 +1148,6 @@ _numops_lsls:
                     bl numops::lsls
                     add sp, #8
                     pop {pc}
-.object PUSH
-.balign 4
-_ldlit_52:
- .word _pxt_bind_lit
-_ldlit_53:
- .word _pxt_copy_list
-.object POP
 _numops_lsrs:
     @scope _numops_lsrs
     lsls r2, r0, #31
@@ -2227,6 +1203,13 @@ mov r7, sp
     str r7, [r6, #4]
 bl pxt::toInt
 pop {pc}
+.object PUSH
+.balign 4
+_ldlit_4:
+ .word _pxt_bind_lit
+_ldlit_5:
+ .word _pxt_copy_list
+.object POP
 _numops_fromInt:
     lsls r2, r0, #1
     asrs r1, r2, #1
@@ -2437,256 +1420,22 @@ _helpers_end:
 .object _pxt_iface_member_names
 _pxt_iface_member_names:
     .word 1
-    .word _str104  ; 0 .
+    .word _str12  ; 0 .
     .word 0
 _vtables_end:
 .balign 4
 .object _pxt_config_data
 _pxt_config_data:
     .word 0
-.balign 4
-_img0:
- .short 0xffff
-        .short 5, 5
-        .byte 0,255,0,255,0,255,255,255,255,255,255,255,255,255,255,0,255,255,255,0,0,0,255,0,0,0
-.balign 4
-_img1:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,255,0,255,0,0,255,255,255,0,0,0,255,0,0,0,0,0,0,0,0
-.balign 4
-_img2:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,255,0,255,0,0,0,0,0,0,255,0,0,0,255,0,255,255,255,0,0
-.balign 4
-_img3:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,255,0,255,0,0,0,0,0,0,0,255,255,255,0,255,0,0,0,255,0
-.balign 4
-_img4:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,255,0,255,0,0,0,0,0,0,0,255,0,255,0,255,0,255,0,255,0
-.balign 4
-_img5:
- .short 0xffff
-        .short 5, 5
-        .byte 255,0,0,0,255,0,255,0,255,0,0,0,0,0,0,255,255,255,255,255,255,0,255,0,255,0
-.balign 4
-_img6:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,255,255,0,255,255,0,0,0,0,0,0,255,255,255,0,0,0,0,0,0,0
-.balign 4
-_img7:
- .short 0xffff
-        .short 5, 5
-        .byte 0,255,0,255,0,0,0,0,0,0,0,0,255,0,0,0,255,0,255,0,0,0,255,0,0,0
-.balign 4
-_img8:
- .short 0xffff
-        .short 5, 5
-        .byte 255,0,0,0,255,0,0,0,0,0,255,255,255,255,255,0,0,0,255,255,0,0,0,255,255,0
-.balign 4
-_img9:
- .short 0xffff
-        .short 5, 5
-        .byte 255,255,255,255,255,255,255,0,255,255,0,0,0,0,0,0,255,0,255,0,0,255,255,255,0,0
-.balign 4
-_img10:
- .short 0xffff
-        .short 5, 5
-        .byte 255,255,0,255,255,0,0,0,0,0,0,0,0,255,0,0,0,255,0,0,0,255,0,0,0,0
-.balign 4
-_img11:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,0,0,0,255,0,0,0,255,0,255,0,255,0,0,0,255,0,0,0,0
-.balign 4
-_img12:
- .short 0xffff
-        .short 5, 5
-        .byte 255,0,0,0,255,0,255,0,255,0,0,0,255,0,0,0,255,0,255,0,255,0,0,0,255,0
-.balign 4
-_img13:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,0,255,0,0,0,255,0,255,0,255,255,255,255,255,0,0,0,0,0,0
-.balign 4
-_img14:
- .short 0xffff
-        .short 5, 5
-        .byte 255,0,0,0,0,255,255,0,0,0,255,0,255,0,0,255,0,0,255,0,255,255,255,255,255,0
-.balign 4
-_img15:
- .short 0xffff
-        .short 5, 5
-        .byte 0,255,0,255,0,255,0,255,0,255,0,255,0,255,0,255,0,255,0,255,0,255,0,255,0,0
-.balign 4
-_img16:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,255,0,0,0,255,0,255,0,255,0,0,0,255,0,255,0,255,0,0,0,255,0,0,0
-.balign 4
-_img17:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,0,255,0,0,0,255,0,255,0,0,0,255,0,0,0,0,0,0,0,0
-.balign 4
-_img18:
- .short 0xffff
-        .short 5, 5
-        .byte 255,255,255,255,255,255,0,0,0,255,255,0,0,0,255,255,0,0,0,255,255,255,255,255,255,0
-.balign 4
-_img19:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,255,255,255,0,0,255,0,255,0,0,255,255,255,0,0,0,0,0,0,0
-.balign 4
-_img20:
- .short 0xffff
-        .short 5, 5
-        .byte 255,255,0,0,255,255,255,0,255,0,0,0,255,0,0,255,255,0,255,0,255,255,0,0,255,0
-.balign 4
-_img21:
- .short 0xffff
-        .short 5, 5
-        .byte 255,255,0,255,255,255,255,255,255,255,0,255,255,255,0,0,255,255,255,0,0,255,255,255,0,0
-.balign 4
-_img22:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,255,255,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,0,255,0,255,0,0
-.balign 4
-_img23:
- .short 0xffff
-        .short 5, 5
-        .byte 0,255,255,0,0,255,255,255,0,0,0,255,255,255,255,0,255,255,255,0,0,0,0,0,0,0
-.balign 4
-_img24:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,255,0,0,0,255,255,255,0,255,255,255,255,255,0,255,255,255,0,0,255,0,255,0,0
-.balign 4
-_img25:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,255,255,255,0,255,255,255,255,255,0,255,0,255,0,0,0,0,0,0,0
-.balign 4
-_img26:
- .short 0xffff
-        .short 5, 5
-        .byte 255,255,0,255,255,255,255,255,255,255,0,0,255,0,0,255,255,255,255,255,255,255,0,255,255,0
-.balign 4
-_img27:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,255,0,0,255,255,255,255,255,0,0,255,0,0,0,255,0,255,0,255,0,0,0,255,0
-.balign 4
-_img28:
- .short 0xffff
-        .short 5, 5
-        .byte 0,255,255,255,0,255,0,255,0,255,255,255,255,255,255,255,255,255,255,255,255,0,255,0,255,0
-.balign 4
-_img29:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,255,0,0,0,0,255,0,0,0,0,255,0,0,0,255,255,255,0,0,0,255,0,0,0
-.balign 4
-_img30:
- .short 0xffff
-        .short 5, 5
-        .byte 255,255,0,0,0,0,255,0,0,0,0,255,0,0,0,0,255,255,255,0,0,255,0,255,0,0
-.balign 4
-_img31:
- .short 0xffff
-        .short 5, 5
-        .byte 0,255,255,255,0,255,0,255,0,255,255,255,255,255,255,0,255,255,255,0,0,255,255,255,0,0
-.balign 4
-_img32:
- .short 0xffff
-        .short 5, 5
-        .byte 0,255,255,255,0,255,255,255,255,255,0,0,255,0,0,255,0,255,0,0,255,255,255,0,0,0
-.balign 4
-_img33:
- .short 0xffff
-        .short 5, 5
-        .byte 255,255,0,0,0,255,255,0,255,255,0,255,0,255,0,0,255,255,255,0,0,0,0,0,0,0
-.balign 4
-_img34:
- .short 0xffff
-        .short 5, 5
-        .byte 255,0,255,0,0,255,0,255,0,0,255,255,255,255,0,255,255,0,255,0,255,255,255,255,0,0
-.balign 4
-_img35:
- .short 0xffff
-        .short 5, 5
-        .byte 255,0,0,0,255,255,0,0,0,255,255,255,255,255,255,0,255,255,255,0,0,0,255,0,0,0
-.balign 4
-_img36:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,255,0,0,0,0,255,0,0,0,0,255,0,0,255,255,255,0,0,255,255,255,0,0,0
-.balign 4
-_img37:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,255,0,0,0,0,255,255,0,0,0,255,0,255,255,255,255,0,0,255,255,255,0,0,0
-.balign 4
-_img38:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,255,0,0,0,0,255,255,0,0,0,255,0,255,255,255,255,0,0,255,255,255,0,0,0
-.balign 4
-_img39:
- .short 0xffff
-        .short 5, 5
-        .byte 255,0,255,0,255,255,0,255,0,255,255,255,255,255,255,0,0,255,0,0,0,0,255,0,0,0
-.balign 4
-_img40:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,255,0,0,0,255,255,255,0,255,255,0,255,255,0,255,255,255,0,0,0,255,0,0,0
-.balign 4
-_img41:
- .short 0xffff
-        .short 5, 5
-        .byte 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             .balign 4
-            .object _str104
-_str104:
+            .object _str12
+_str12:
  .word pxt::string_inline_ascii_vt
     .short 0
     .string ""
             .balign 4
-            .object _str42
-_str42:
- .word pxt::string_inline_ascii_vt
-    .short 1
-    .string "D"
-            .balign 4
-            .object _str43
-_str43:
- .word pxt::string_inline_ascii_vt
-    .short 1
-    .string "F"
-            .balign 4
-            .object _str44
-_str44:
- .word pxt::string_inline_ascii_vt
-    .short 1
-    .string "M"
-            .balign 4
-            .object _str45
-_str45:
- .word pxt::string_inline_ascii_vt
-    .short 1
-    .string "U"
-            .balign 4
-            .object _str46
-_str46:
+            .object _str0
+_str0:
  .word pxt::string_inline_ascii_vt
     .short 18
     .string "raise-tower-bridge"
