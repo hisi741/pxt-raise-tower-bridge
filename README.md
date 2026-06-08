@@ -1,61 +1,53 @@
-# Code reference — Tower Bridge PXT blocks
+# Tower Bridge — PXT Extension
 
-This README documents the code API and offered MakeCode/PXT blocks in this repository.
+MakeCode/PXT extension for micro:bit Tower Bridge control.
 
-## Key types and state
+## Development Guide
 
-- `enum BridgePosition` — named positions: `Down`, `Flat`, `Middle`, `Up`.
-- `namespace towerBridge` — main API namespace. Internal state variables:
-	- `currentPosition` — overall bridge state.
-	- `currentLeftPosition`, `currentRightPosition` — per-side positions.
+### The most important file
 
-## Primary functions / blocks
+If you don't know what to look, just open **`main.ts`**.
 
-These functions are exported as MakeCode blocks (see `//% blockId=...` in `main.ts`). They are intentionally small and act as placeholders for physical or simulated bridge control.
+### Workflow
 
-- `setBridgePosition(position: BridgePosition)` — set the global bridge position.
-- `raiseBridge()` / `lowerBridge()` — convenience functions that set the bridge to `Up` or `Flat`.
+1. **Design functions** — decide what blocks are needed.
+2. **Implement the functions** in `main.ts`.
+3. **Handle simultaneous execution** (see below).
 
-Per-side partial movement (step):
-- `raiseRightBridge()` / `lowerRightBridge()` — move right side up/down by one step.
-- `raiseLeftBridge()` / `lowerLeftBridge()` — move left side up/down by one step.
+---
+## 1. Design functions
+Now that I know the way to hide functions, I’m all for adding them for now, even if we’re not sure whether we’ll end up using them. 
 
-Per-side full movement:
-- `raiseRightBridgeFully()` / `lowerRightBridgeFully()` — set right side to `Up` / `Down`.
-- `raiseLeftBridgeFully()` / `lowerLeftBridgeFully()` — set left side to `Up` / `Down`.
+## 2. Implement functions
+I have absolutely no idea what works and what doesn't, so @everyone (including @codex and @claude_code), do your best!
 
-Other helpers:
-- `boatDetected(): boolean` — a sensor mock (button A). Use to trigger bridge behaviour in examples.
-- `trafficRed()` / `trafficGreen()` — show a simple traffic icon on the micro:bit display.
 
-## How it displays state
+## 3. Simultaneous Execution
 
-- For quick feedback the code uses `basic.showString(...)`. Side-specific actions show `R` or `L` followed by a single-letter position (`D`, `F`, `M`, `U`).
-
-## Usage examples
-
-TypeScript example (MakeCode):
+Consider the following example:
 
 ```ts
-// raise the right side a step when a boat is detected
-basic.forever(() => {
-	if (towerBridge.boatDetected()) {
-		towerBridge.raiseRightBridge()
-	}
+input.onButtonPressed(Button.A, function () {
+    towerBridge.raiseRightBascule()
+    towerBridge.raiseLeftBascule()
 })
-
-// set both sides fully up
-towerBridge.raiseRightBridgeFully()
-towerBridge.raiseLeftBridgeFully()
 ```
 
-Blocks: load the project in MakeCode / PXT and search for the "Tower Bridge" toolbox. Blocks correspond to the function names above.
+The ideal behaviour here is that both bascules rise at the same time.
+However, as written, the right bascule finishes before the left one starts (move sequentially).
 
-## Development notes
+According to ChatGPT, it is technically possible to make both move simultaneously by structuring the code carefully. I think this is a challenge worth solving.
 
-- The current functions are scaffolded for prototyping and classroom use; they do not drive motors or real hardware by default.
-- Expect the API and blocks to change as the project evolves — this file will be updated to reflect breaking changes.
+---
 
-If you'd like, I can also add a short examples file (`examples.md`) or inline comments in `main.ts` showing recommended classroom activities.
+## Available Blocks for now
 
-
+| Block | Description |
+|---|---|
+| `raise left bascule` | Raise the left bascule for somewhat small amount|
+| `raise right bascule` | Raise the right bascule for somewhat small amount|
+| `lower left bascule` | Lower the left bascule for somewhat small amount|
+| `lower right bascule` | Lower the right bascule for somewhat small amount|
+| `set left bascule to n °` | Set the left bascule angle (−15 to 86°) |
+| `set right bascule to n °` | Set the right bascule angle (−15 to 86°) |
+| `ship coming` | Boolean sensor block — use in `if` conditions |
