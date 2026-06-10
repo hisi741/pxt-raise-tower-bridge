@@ -1,5 +1,5 @@
 //% weight=100 color=#0066AA icon="" block="Tower Bridge"
-//% groups=['Bridge','Sensors']
+//% groups='["Bridge","Sensors"]'
 namespace towerBridge {
 
     /**
