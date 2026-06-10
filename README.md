@@ -51,3 +51,9 @@ According to ChatGPT, it is technically possible to make both move simultaneousl
 | `set left bascule to n °` | Set the left bascule angle (−15 to 86°) |
 | `set right bascule to n °` | Set the right bascule angle (−15 to 86°) |
 | `ship coming` | Boolean sensor block — use in `if` conditions |
+
+
+
+## Other function idea
+Show red/green traffic light
+raise/lower both bridge
