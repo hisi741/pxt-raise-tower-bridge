@@ -4,8 +4,7 @@
     "description": "MakeCode blocks for a Tower Bridge micro:bit workshop.",
     "license": "MIT",
     "dependencies": {
-        "core": "*",
-        "microphone": "*"
+        "core": "*"
     },
     "files": [
         "main.ts",
