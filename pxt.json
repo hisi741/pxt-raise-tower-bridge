@@ -8,12 +8,7 @@
     },
     "files": [
         "main.ts",
-        "README.md",
-        "tutorials/task1.md",
-        "tutorials/task2.md",
-        "tutorials/task3.md",
-        "tutorials/task4.md",
-        "tutorials/task5.md"
+        "README.md"
     ],
     "testFiles": [
         "test.ts"
