@@ -10,6 +10,15 @@ namespace towerBridge {
     //% group="Bridge"
     //% weight=90
     export function raiseLeftBascule(): void {
+
+
+
+
+
+
+
+
+
     }
 
     /**
@@ -20,6 +29,13 @@ namespace towerBridge {
     //% group="Bridge"
     //% weight=89
     export function raiseRightBascule(): void {
+
+
+
+
+
+
+
     }
 
     /**
@@ -30,6 +46,11 @@ namespace towerBridge {
     //% group="Bridge"
     //% weight=88
     export function lowerLeftBascule(): void {
+
+
+
+
+
     }
 
     /**
@@ -40,6 +61,9 @@ namespace towerBridge {
     //% group="Bridge"
     //% weight=87
     export function lowerRightBascule(): void {
+
+
+
     }
 
     /**
@@ -52,6 +76,8 @@ namespace towerBridge {
     //% group="Bridge"
     //% weight=86
     export function setLeftBasculeTo(n: number): void {
+
+
     }
 
     /**
@@ -64,6 +90,9 @@ namespace towerBridge {
     //% group="Bridge"
     //% weight=85
     export function setRightBasculeTo(n: number): void {
+
+
+
     }
 
     /**
