@@ -74,10 +74,16 @@ namespace towerBridge {
 
         //poll encoders
         //TODO check encoder angle processing/conversion logic
-        northBascAngle = pollEncoderRawAngle(northEncoderChannel) - 180
-        southBascAngle = (360.0 - pollEncoderRawAngle(southEncoderChannel)) - 180
+        //from raw 0-360 angles:
+        //south bascule starts at 270, negative bascule rot is positive
+        //north bascule starts at 90, positive bascule rot is positive
+        //same pole of magnet should always face forwards/backwards relative to bascule, on both sides (and then magnet polarity is essentially flipped for north/south)
+        northBascAngle = pollEncoderRawAngle(northEncoderChannel) - 90
+        southBascAngle = (360 - pollEncoderRawAngle(southEncoderChannel)) - 90
 
-        serial.writeLine("" + northBascAngle)
+        serial.writeLine("north: " + northBascAngle)
+        serial.writeLine("south: " + southBascAngle)
+
 
         //poll motor current sense
         northMotorMilliamps = pollMotorMilliamps(NORTH_IMON_PIN)
