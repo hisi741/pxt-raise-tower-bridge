@@ -2,6 +2,9 @@
 //% groups='["Bridge","Sensors"]'
 namespace towerBridge {
 
+    let basculeLowerLimit = -15
+    let basculeUpperLimit = 75
+
     //pindefs.h memorial let statements
     let PWR_IMON_PIN = AnalogPin.P0
     let NORTH_IMON_PIN = AnalogPin.P1
@@ -24,6 +27,9 @@ namespace towerBridge {
     let encoderI2CAddr: uint8 = 0x36
     let colorI2CAddr: uint8 = 0x44 //0x52
 
+    let northEncoderChannel = 0
+    let southEncoderChannel = 1
+
     function swapBytes(value: NumberFormat.UInt16LE) {
         return ((value & 0xFF00) >> 8) | ((value & 0x00FF) << 8)
     }
@@ -32,7 +38,9 @@ namespace towerBridge {
         pins.i2cWriteNumber(muxI2CAddr, channel == 0 ? 0b0101 : 0b0110, NumberFormat.UInt8LE, false)
     }
 
-    function getEncoderRawAngle() {
+    //configures I2C mux for correct encoder channel, then polls that encoder
+    function pollEncoderRawAngle(channel: number) {
+        setEncoderChannel(channel)
         pins.i2cWriteNumber(encoderI2CAddr, 0x0C, NumberFormat.UInt8LE, true)
         let rawAngle = pins.i2cReadNumber(encoderI2CAddr, NumberFormat.UInt16LE, false)
         rawAngle = ((rawAngle & 0xFF00) >> 8) | ((rawAngle & 0x000F) << 8)
@@ -40,22 +48,72 @@ namespace towerBridge {
     }
 
     //returns the current drawn from the polled motor in milliamps
-    function pollMotorVoltage(pin: number) {
+    function pollMotorMilliamps(pin: number) {
         return pins.analogReadPin(pin) * (3.3 / 1024.0) * (700.0 / 2.5) //10bit ADC, 700mA/2.5V VREF
     }
+
+    let northBascAngle = 0
+    let southBascAngle = 0
+    let northMotorMilliamps = 0
+    let southMotorMilliamps = 0
+
+    let northMotorSpeed = 0
+    let southMotorSpeed = 0
 
     basic.forever(function () {
         //code in here will run within the fibre scheduler, scheduled cooperatively, with a 6ms polling time
         /*
         TODO:
-         poll encoders
-         poll motor current sense
-         turn off motors if encoders over limit in either direction
-         set LEDs if encoders over limit in either direction
+         ~~poll encoders~~
+         ~~poll motor current sense~~
+         ~~turn off motors if encoders over limit in either direction~~
+         ~~set LEDs if encoders over limit in either direction~~
          maybe write hiccup timer code for if lowtrip isn't enabled and current is over limit (not sure exactly what the best logic for this would be, will probably write this once we have final model assembled)
          */
+
+        //poll encoders
+        northBascAngle = pollEncoderRawAngle(northEncoderChannel) //TODO add logic here to convert to degrees from raw integer output
+        southBascAngle = pollEncoderRawAngle(southEncoderChannel)
+
+        //poll motor current sense
+        northMotorMilliamps = pollMotorMilliamps(NORTH_IMON_PIN)
+        southMotorMilliamps = pollMotorMilliamps(SOUTH_IMON_PIN)
+
+        //set collision warning LEDs
+        pins.digitalWritePin(N_BASC_LED_PIN, + (northBascAngle <= basculeLowerLimit)) //world's dumbest boolean to integer cast
+        pins.digitalWritePin(N_TOWER_LED_PIN, + (northBascAngle >= basculeUpperLimit))
+        pins.digitalWritePin(S_BASC_LED_PIN, + (southBascAngle <= basculeLowerLimit))
+        pins.digitalWritePin(S_TOWER_LED_PIN, + (southBascAngle >= basculeUpperLimit))
+
+        //stop motors from moving if they've hit limits and are moving in the wrong direction
+        if(northBascAngle <= basculeLowerLimit && northMotorSpeed < 0) setNorthMotorSpeed(0)
+        if(northBascAngle >= basculeUpperLimit && northMotorSpeed > 0) setNorthMotorSpeed(0)
+        if(southBascAngle <= basculeLowerLimit && southMotorSpeed < 0) setSouthMotorSpeed(0)
+        if(southBascAngle >= basculeUpperLimit && southMotorSpeed > 0) setSouthMotorSpeed(0)
+
         basic.pause(24) //run monitoring loop at ~42Hz (every 4 scheduler cycles when not interrupted)
     })
+
+    function setMotorSpeed(speed: number, IN1: number, IN2: number){
+        let PWMvalue = Math.clamp(-100, 100, speed) * (1024.0/100.0)
+        if(speed > 0){
+            pins.analogWritePin(IN1, PWMvalue)
+            pins.digitalWritePin(IN2, 0)
+        }else{
+            pins.digitalWritePin(IN1, 0)
+            pins.analogWritePin(IN2, PWMvalue)
+        }
+    }
+
+    function setNorthMotorSpeed(speed: number){
+        northMotorSpeed = speed
+        setMotorSpeed(speed, NIN1, NIN2)
+    }
+
+    function setSouthMotorSpeed(speed: number){
+        southMotorSpeed = speed
+        setMotorSpeed(speed, SIN1, SIN2)
+    }
 
     /**
      * Raise the left bascule.
