@@ -60,6 +60,7 @@ namespace towerBridge {
     let northMotorSpeed = 0
     let southMotorSpeed = 0
 
+    //main monitoring loop
     basic.forever(function () {
         //code in here will run within the fibre scheduler, scheduled cooperatively, with a 6ms polling time
         /*
@@ -72,8 +73,11 @@ namespace towerBridge {
          */
 
         //poll encoders
+        //TODO check encoder angle processing/conversion logic
         northBascAngle = pollEncoderRawAngle(northEncoderChannel) - 180
-        southBascAngle = pollEncoderRawAngle(southEncoderChannel) - 180
+        southBascAngle = (360.0 - pollEncoderRawAngle(southEncoderChannel)) - 180
+
+        serial.writeLine("" + northBascAngle)
 
         //poll motor current sense
         northMotorMilliamps = pollMotorMilliamps(NORTH_IMON_PIN)
