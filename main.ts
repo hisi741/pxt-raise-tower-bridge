@@ -44,7 +44,7 @@ namespace towerBridge {
         pins.i2cWriteNumber(encoderI2CAddr, 0x0C, NumberFormat.UInt8LE, true)
         let rawAngle = pins.i2cReadNumber(encoderI2CAddr, NumberFormat.UInt16LE, false)
         rawAngle = ((rawAngle & 0xFF00) >> 8) | ((rawAngle & 0x000F) << 8)
-        return rawAngle
+        return (rawAngle / 4096.0) * 360.0
     }
 
     //returns the current drawn from the polled motor in milliamps
@@ -72,8 +72,8 @@ namespace towerBridge {
          */
 
         //poll encoders
-        northBascAngle = pollEncoderRawAngle(northEncoderChannel) //TODO add logic here to convert to degrees from raw integer output
-        southBascAngle = pollEncoderRawAngle(southEncoderChannel)
+        northBascAngle = pollEncoderRawAngle(northEncoderChannel) - 180
+        southBascAngle = pollEncoderRawAngle(southEncoderChannel) - 180
 
         //poll motor current sense
         northMotorMilliamps = pollMotorMilliamps(NORTH_IMON_PIN)
