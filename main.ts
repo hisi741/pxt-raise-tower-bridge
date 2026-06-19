@@ -2,8 +2,27 @@
 //% groups='["Bridge","Sensors"]'
 namespace towerBridge {
 
+    let muxI2CAddr: uint8 = 0x70
+    let encoderI2CAddr: uint8 = 0x36
+    let colorI2CAddr: uint8 = 0x44 //0x52
+
+    function setEncoderChannel(channel: number) { //this also implicitly
+        pins.i2cWriteNumber(muxI2CAddr, channel == 0 ? 0b0101 : 0b0110, NumberFormat.UInt8LE, false)
+    }
+
+    function getEncoderRawAngle() {
+        pins.i2cWriteNumber(encoderI2CAddr, 0x0C, NumberFormat.UInt8LE, true)
+        let rawAngle = pins.i2cReadNumber(encoderI2CAddr, NumberFormat.UInt16LE, false)
+        rawAngle = ((rawAngle & 0xFF00) >> 8) | ((rawAngle & 0x000F) << 8)
+        return rawAngle
+    }
+
+    function swapBytes(value: NumberFormat.UInt16LE) {
+        return ((value & 0xFF00) >> 8) | ((value & 0x00FF) << 8)
+    }
+
     basic.forever(function () {
-        music.play(music.tonePlayable(262, music.beat(BeatFraction.Whole)), music.PlaybackMode.UntilDone)
+        //code in here will run within the fibre scheduler, scheduled cooperatively, with a 6ms polling time
         basic.pause(1500)
     })
 
