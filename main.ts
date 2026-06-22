@@ -1,9 +1,26 @@
+enum BridgeSide {
+    //% block="left"
+    Left,
+    //% block="right"
+    Right
+}
+
+enum BasculeDirection {
+    //% block="raise"
+    Raise,
+    //% block="lower"
+    Lower
+}
+
 //% weight=100 color=#0066AA icon="" block="Tower Bridge"
 //% groups='["Bridge","Sensors"]'
 namespace towerBridge {
 
     let basculeLowerLimit = -15
     let basculeUpperLimit = 75
+
+    let basculeLowerThresh = 0
+    let basculeUpperThresh = basculeUpperLimit - 5
 
     //pindefs.h memorial let statements
     let PWR_IMON_PIN = AnalogPin.P0
@@ -125,141 +142,184 @@ namespace towerBridge {
         setMotorSpeed(speed, SIN1, SIN2)
     }
 
-
-    // enum BridgeSide {
-    //     //% block="left"
-    //     Left,
-    //     //% block="right"
-    //     Right
-    // }
-    //
-    // /**
-    //  * Set a bascule to a specific speed
-    //  * @param side side of bridge to set
-    //  * @param speed speed to set
-    //  */
-    // //% blockId=towerbridge_set_bascule_speed
-    // //% block="set the bascule on the side || $side to $speed speed"
-    // //% expandableArgumentMode="toggle"
-    // //% side.defl=BridgeSide.Left
-    // //% speed.defl=0
-    // export function setBasculeMotorSpeed(side?: BridgeSide, speed?: number): void {
-    //
-    // }
-    //
-    // /**
-    //  * Set left bascule speed
-    //  */
-    // //% blockId=towerbridge_set_left_bascule_speed
-    // //% block="set left bascule speed"
-    // //% group="Bridge"
-    // //% weight=90
-    // export function setLeftBasculeSpeed(speed?: number): void {
-    //
-    // }
-
     /**
-     * Raise the left bascule.
+     * Set a bascule to a specific speed
+     * @param side side of bridge to set
+     * @param speed speed to set
      */
-    //% blockId=towerbridge_raise_left_bascule
-    //% block="raise left bascule"
+    //% blockId=towerbridge_set_bascule_speed
+    //% block="set the $side bascule to speed $speed"
     //% group="Bridge"
     //% weight=90
-    export function raiseLeftBascule(): void {
-
-
-
-
-
-
-
-
-
+    //% side.defl=BridgeSide.Left
+    //% speed.min=-100 speed.max=100 speed.defl=0
+    //% speed.shadow="speedPicker"
+    export function setBasculeMotorSpeed(side?: BridgeSide, speed?: number): void {
+        switch (side){
+            case BridgeSide.Left:
+                setSouthMotorSpeed(speed)
+                break
+            case BridgeSide.Right:
+                setNorthMotorSpeed(speed)
+                break
+        }
     }
 
     /**
-     * Raise the right bascule.
+     * Start a bascule moving in a direction (at speed 50)
+     * @param side side of bridge to set
+     * @param direction direction to set
      */
-    //% blockId=towerbridge_raise_right_bascule
-    //% block="raise right bascule"
+    //% blockId=towerbridge_set_bascule_direction
+    //% block="start $direction -ing the $side bascule"
     //% group="Bridge"
-    //% weight=89
-    export function raiseRightBascule(): void {
-
-
-
-
-
-
-
+    //% weight=90
+    //% side.defl=BridgeSide.Left
+    //% direction.defl=BasculeDirection.Raise
+    export function setBasculeMoveDirection(side?: BridgeSide, direction?: BasculeDirection): void {
+        let speed = 0
+        switch (direction) {
+            case BasculeDirection.Raise:
+                speed = 50
+                break
+            case BasculeDirection.Lower:
+                speed = -50
+                break
+        }
+        switch (side) {
+            case BridgeSide.Left:
+                setSouthMotorSpeed(speed)
+                break
+            case BridgeSide.Right:
+                setNorthMotorSpeed(speed)
+                break
+        }
     }
 
     /**
-     * Lower the left bascule.
+     * Move a bascule to a specific angle in degrees.
+     * @param side side of the bridge to set
+     * @param angle angle in degrees, eg: 45
      */
-    //% blockId=towerbridge_lower_left_bascule
-    //% block="lower left bascule"
-    //% group="Bridge"
-    //% weight=88
-    export function lowerLeftBascule(): void {
-
-
-
-
-
-    }
-
-    /**
-     * Lower the right bascule.
-     */
-    //% blockId=towerbridge_lower_right_bascule
-    //% block="lower right bascule"
-    //% group="Bridge"
-    //% weight=87
-    export function lowerRightBascule(): void {
-
-
-
-    }
-
-    /**
-     * Set the left bascule to a specific angle in degrees.
-     * @param n angle in degrees, eg: 45
-     */
-    //% blockId=towerbridge_set_left_bascule_to
-    //% block="set left bascule to %n °"
-    //% n.min=-15 n.max=86 n.defl=0
+    //% blockId=towerbridge_move_bascule_to_degrees
+    //% block="move $side bascule to %angle °"
+    //% side.defl=BridgeSide.Left
+    //% angle.min=-15 angle.max=86 angle.defl=0
     //% group="Bridge"
     //% weight=86
-    export function setLeftBasculeTo(n: number): void {
-
-
+    export function moveBasculeTo(side?: BridgeSide, angle?: number): void {
+        //note that we (tragically) can't use the protractor shadow picker for this block because that is hardcoded 0-180
+        //TODO
     }
 
     /**
-     * Set the right bascule to a specific angle in degrees.
-     * @param n angle in degrees, eg: 45
+     * Move the bascule an amount of degrees relative to it's current angle.
+     * @param side side of the bridge to set
+     * @param angle angle in degrees, eg: 45
      */
-    //% blockId=towerbridge_set_right_bascule_to
-    //% block="set right bascule to %n °"
-    //% n.min=-15 n.max=86 n.defl=0
+    //% blockId=towerbridge_move_bascule_for_degrees
+    //% block="move $side bascule %angle ° from it's current angle"
+    //% side.defl=BridgeSide.Left
+    //% angle.min=-15 angle.max=86 angle.defl=0
     //% group="Bridge"
-    //% weight=85
-    export function setRightBasculeTo(n: number): void {
-
-
-
+    //% weight=86
+    export function moveBasculeForDegrees(side?: BridgeSide, angle?: number): void {
+        //note that we (tragically) can't use the protractor shadow picker for this block because that is hardcoded 0-180
+        //TODO
     }
 
     /**
-     * Returns true if a ship is coming.
+     * Raises or lowers a bascule (at speed 50)
+     * @param side side of bridge to set
+     * @param direction sets whether to raise or lower bascule
      */
-    //% blockId=towerbridge_ship_coming
-    //% block="ship coming"
-    //% group="Sensors"
+    //% blockId=towerbridge_raise_lower_bascule
+    //% block="$direction the $side bascule"
+    //% group="Bridge"
+    //% weight=90
+    //% side.defl=BridgeSide.Left
+    //% direction.defl=BasculeDirection.Raise
+    export function raiseLowerBascule(side?: BridgeSide, direction?: BasculeDirection): void {
+        let angleTarget = direction == BasculeDirection.Raise ? 86 : 0
+        moveBasculeTo(side, angleTarget)
+    }
+
+
+
+
+    /**
+     * Returns true if the bascule is in/close enough to the raised or lowered position
+     */
+    //% blockId=towerbridge_bascule_in_position
+    //% block="$side bascule is fully $direction -ed"
+    //% group="Angle Sensors"
     //% weight=84
-    export function shipComing(): boolean {
-        return false
+    //% side.defl=BridgeSide.Left
+    //% direction.defl=BasculeDirection.Raise
+    export function isBasculeInPosition(side?: BridgeSide, direction?: BasculeDirection): boolean {
+        let bascAngle = 0
+        switch (side) {
+            case BridgeSide.Left:
+                bascAngle = southBascAngle
+                break
+            case BridgeSide.Right:
+                bascAngle = northBascAngle
+                break
+        }
+        switch (direction) {
+            case BasculeDirection.Raise:
+                return bascAngle >= basculeUpperThresh
+                break
+            case BasculeDirection.Lower:
+                return bascAngle <= basculeLowerThresh
+                break
+        }
+    }
+
+    /**
+     * Get bascule position in degrees (from last time it is polled in main control loop)
+     */
+    //% blockId=towerbridge_get_bascule_angle
+    //% block="$side bascule angle"
+    //% group="Angle Sensors"
+    //% weight=84
+    //% side.defl=BridgeSide.Left
+    export function getBasculePosition(side?: BridgeSide): number {
+        //TODO consider rounding to nearest integer?
+        switch (side) {
+            case BridgeSide.Left:
+                return southBascAngle
+                break
+            case BridgeSide.Right:
+                return northBascAngle
+                break
+        }
+    }
+
+    /**
+     * Returns true if the angle sensor has detected the presence of the magnet, indicating the bascule is seated
+     */
+    //% blockId=towerbridge_is_bascule_present
+    //% block="$side bascule is present"
+    //% group="Angle Sensors"
+    //% weight=84
+    //% side.defl=BridgeSide.Left
+    export function isBasculePresent(side?: BridgeSide): boolean {
+        //TODO
+        return true
+    }
+
+    /**
+     * Returns true if the angle sensor is out of valid range, indicating the bascule has been inserted upside down
+     */
+    //% blockId=towerbridge_is_bascule_upside_down
+    //% block="$side bascule is upside-down"
+    //% group="Angle Sensors"
+    //% weight=84
+    //% side.defl=BridgeSide.Left
+    export function isBasculeUpsideDown(side?: BridgeSide): boolean {
+        //TODO
+        return true
     }
 
 }
