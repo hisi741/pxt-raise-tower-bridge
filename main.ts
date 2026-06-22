@@ -126,45 +126,37 @@ namespace towerBridge {
     }
 
 
-    enum BridgeSide {
-        //% block="left"
-        Left,
-        //% block="right"
-        Right
-    }
-
-    /**
-     * Set a bascule to a specific speed
-     * @param side side of bridge to set
-     * @param speed speed to set
-     */
-    //% blockId=towerbridge_set_bascule_speed
-    //% block="set the bascule on the side || $side to $speed speed"
-    //% expandableArgumentMode="toggle"
-    //% side.defl=BridgeSide.Left
-    //% speed.defl=0
-    export function setBasculeMotorSpeed(side?: BridgeSide, speed?: number): void {
-
-    }
-
-    /**
-     * Set left bascule speed
-     */
-    //% blockId=towerbridge_set_left_bascule_speed
-    //% block="set left bascule speed"
-    //% group="Bridge"
-    //% weight=90
-    export function setLeftBasculeSpeed(speed?: number): void {
-
-
-
-
-
-
-
-
-
-    }
+    // enum BridgeSide {
+    //     //% block="left"
+    //     Left,
+    //     //% block="right"
+    //     Right
+    // }
+    //
+    // /**
+    //  * Set a bascule to a specific speed
+    //  * @param side side of bridge to set
+    //  * @param speed speed to set
+    //  */
+    // //% blockId=towerbridge_set_bascule_speed
+    // //% block="set the bascule on the side || $side to $speed speed"
+    // //% expandableArgumentMode="toggle"
+    // //% side.defl=BridgeSide.Left
+    // //% speed.defl=0
+    // export function setBasculeMotorSpeed(side?: BridgeSide, speed?: number): void {
+    //
+    // }
+    //
+    // /**
+    //  * Set left bascule speed
+    //  */
+    // //% blockId=towerbridge_set_left_bascule_speed
+    // //% block="set left bascule speed"
+    // //% group="Bridge"
+    // //% weight=90
+    // export function setLeftBasculeSpeed(speed?: number): void {
+    //
+    // }
 
     /**
      * Raise the left bascule.
