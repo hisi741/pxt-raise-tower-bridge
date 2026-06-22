@@ -96,33 +96,74 @@ namespace towerBridge {
         pins.digitalWritePin(S_TOWER_LED_PIN, + (southBascAngle >= basculeUpperLimit))
 
         //stop motors from moving if they've hit limits and are moving in the wrong direction
-        if(northBascAngle <= basculeLowerLimit && northMotorSpeed < 0) setNorthMotorSpeed(0)
-        if(northBascAngle >= basculeUpperLimit && northMotorSpeed > 0) setNorthMotorSpeed(0)
-        if(southBascAngle <= basculeLowerLimit && southMotorSpeed < 0) setSouthMotorSpeed(0)
-        if(southBascAngle >= basculeUpperLimit && southMotorSpeed > 0) setSouthMotorSpeed(0)
+        if (northBascAngle <= basculeLowerLimit && northMotorSpeed < 0) setNorthMotorSpeed(0)
+        if (northBascAngle >= basculeUpperLimit && northMotorSpeed > 0) setNorthMotorSpeed(0)
+        if (southBascAngle <= basculeLowerLimit && southMotorSpeed < 0) setSouthMotorSpeed(0)
+        if (southBascAngle >= basculeUpperLimit && southMotorSpeed > 0) setSouthMotorSpeed(0)
 
         basic.pause(24) //run monitoring loop at ~42Hz (every 4 scheduler cycles when not interrupted)
     })
 
-    function setMotorSpeed(speed: number, IN1: number, IN2: number){
-        let PWMvalue = Math.clamp(-100, 100, speed) * (1024.0/100.0)
-        if(speed > 0){
+    function setMotorSpeed(speed: number, IN1: number, IN2: number) {
+        let PWMvalue = Math.clamp(-100, 100, speed) * (1024.0 / 100.0)
+        if (speed > 0) {
             pins.analogWritePin(IN1, PWMvalue)
             pins.digitalWritePin(IN2, 0)
-        }else{
+        } else {
             pins.digitalWritePin(IN1, 0)
             pins.analogWritePin(IN2, PWMvalue)
         }
     }
 
-    function setNorthMotorSpeed(speed: number){
+    function setNorthMotorSpeed(speed: number) {
         northMotorSpeed = speed
         setMotorSpeed(speed, NIN1, NIN2)
     }
 
-    function setSouthMotorSpeed(speed: number){
+    function setSouthMotorSpeed(speed: number) {
         southMotorSpeed = speed
         setMotorSpeed(speed, SIN1, SIN2)
+    }
+
+
+    enum BridgeSide {
+        //% block="left"
+        Left,
+        //% block="right"
+        Right
+    }
+
+    /**
+     * Set a bascule to a specific speed
+     * @param side side of bridge to set
+     * @param speed speed to set
+     */
+    //% blockId=towerbridge_set_bascule_speed
+    //% block="set the bascule on the side || $side to $speed speed"
+    //% expandableArgumentMode="toggle"
+    //% side.defl=BridgeSide.Left
+    //% speed.defl=0
+    export function setBasculeMotorSpeed(side?: BridgeSide, speed?: number): void {
+
+    }
+
+    /**
+     * Set left bascule speed
+     */
+    //% blockId=towerbridge_set_left_bascule_speed
+    //% block="set left bascule speed"
+    //% group="Bridge"
+    //% weight=90
+    export function setLeftBasculeSpeed(speed?: number): void {
+
+
+
+
+
+
+
+
+
     }
 
     /**
