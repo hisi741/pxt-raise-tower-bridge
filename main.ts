@@ -28,11 +28,11 @@ enum ShipTransitDirection {
 
 enum ColorSensorColor {
     //% block="red"
-    Red,
+    Red = 0xFF0000,
     //% block="green"
-    Green,
+    Green = 0x00FF00,
     //% block="blue"
-    Blue,
+    Blue = 0x0000FF,
 } //TODO idk there's probably more colors or something
 
 //% weight=100 color=#0066AA icon="" block="Tower Bridge"
@@ -437,6 +437,105 @@ namespace towerBridge {
     //% weight=84
     export function getColor(color: ColorSensorColor): ColorSensorColor {
         return color
+    }
+
+    /**
+     * Get the hue reading the color sensor on the north-west side of the bridge is seeing
+     */
+    //% blockId=towerbridge_color_sensor_reading_hue
+    //% block=hue seen"
+    //% group="Colour Sensor"
+    //% weight=84
+    export function getColorSensorReadingHue(): number {
+        return 255 //TODO implement
+    }
+
+    /**
+     * Get the saturation reading the color sensor on the north-west side of the bridge is seeing
+     */
+    //% blockId=towerbridge_color_sensor_reading_sat
+    //% block=saturation seen"
+    //% group="Colour Sensor"
+    //% weight=84
+    export function getColorSensorReadingSaturation(): number {
+        return 255 //TODO implement
+    }
+
+    /**
+     * Get the value reading the color sensor on the north-west side of the bridge is seeing
+     */
+    //% blockId=towerbridge_color_sensor_reading_val
+    //% block=value seen"
+    //% group="Colour Sensor"
+    //% weight=84
+    export function getColorSensorReadingValue(): number {
+        return 255 //TODO implement
+    }
+
+    /**
+     * Get the brightness reading the color sensor on the north-west side of the bridge is seeing
+     */
+    //% blockId=towerbridge_color_sensor_reading_brightness
+    //% block=total brightness seen"
+    //% group="Colour Sensor"
+    //% weight=84
+    export function getColorSensorReadingBrightness(): number {
+        return 255 //TODO implement
+    }
+
+
+
+
+
+
+
+    /**
+     * Set the color (with seperate H, S, V values) of the tower LEDs
+     * @param side side of the bridge to set
+     * @param hue hue to set lighting to
+     * @param saturation saturation to set lighting to
+     * @param value value to set lighting to
+     */
+    //% blockId=towerbridge_set_tower_color_hsv
+    //% block="set the $side tower lighting to $color"
+    //% side.defl=BridgeSide.Left
+    //% hue.min=0 hue.max=255 hue.defl=170
+    //% saturation.min=0 saturation.max=255 saturation.defl=170
+    //% value.min=0 value.max=255 value.defl=170
+    //% group="Lighting"
+    //% weight=86
+    export function setTowerLightingColorHSV(side?: BridgeSide, hue?: number, saturation?: number, value?: number): void {
+        //TODO
+    }
+
+    /**
+     * Set the color (with color picker) of the tower LEDs, given a value in hex (like 0xFF0000, for red)
+     * @param side side of the bridge to set
+     * @param color color to set lighting to
+     */
+    //% blockId=towerbridge_set_tower_color
+    //% block="set the $side tower lighting to $color"
+    //% side.defl=BridgeSide.Left
+    //% color.shadow="colorNumberPicker"
+    //% group="Lighting"
+    //% weight=86
+    export function setTowerLightingColorHex(side?: BridgeSide, color?: number): void {
+        //TODO
+    }
+
+    /**
+     * Set the brightness (0-255) of the tower LEDs
+     * @param side side of the bridge to set
+     * @param brightness brightness to set lighting to
+     */
+    //% blockId=towerbridge_set_tower_brightness
+    //% block="set the $side tower lighting to $color"
+    //% side.defl=BridgeSide.Left
+    //% brightness.min=0 brightness.max=255 brightness.defl=100
+    //% group="Lighting"
+    //% weight=86
+    export function setTowerLightingBrightness(side?: BridgeSide, brightness?: number): void {
+        //TODO
     }
 
 
