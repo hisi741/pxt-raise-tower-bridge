@@ -63,6 +63,9 @@ namespace towerBridge {
     let NIN1 = DigitalPin.P16
     //I2C pins left unassigned because they are configured by the I2C peripheral
 
+    let EAST_BREAKBEAM_PIN = SENSE2_PIN
+    let WEST_BREAKBEAM_PIN = SENSE1_PIN
+
     let muxI2CAddr: uint8 = 0x70
     let encoderI2CAddr: uint8 = 0x36
     let colorI2CAddr: uint8 = 0x44 //0x52
@@ -100,8 +103,10 @@ namespace towerBridge {
     let northMotorSpeed = 0
     let southMotorSpeed = 0
 
-    let shipTransittingBridge = false //TODO implement
-    let lastShipTransitDirection = ShipTransitDirection.Upriver //TODO implement
+    let shipTransittingBridge = false
+    let lastShipTransitDirection = ShipTransitDirection.Upriver
+    let prevEastBreakbeamState = false
+    let prevWestBreakbeamState = false
 
     //main monitoring loop
     basic.forever(function () {
@@ -124,8 +129,8 @@ namespace towerBridge {
         northBascAngle = pollEncoderRawAngle(northEncoderChannel) - 90
         southBascAngle = (360 - pollEncoderRawAngle(southEncoderChannel)) - 90
 
-        serial.writeLine("north: " + northBascAngle)
-        serial.writeLine("south: " + southBascAngle)
+        serial.writeLine("North Angle Sensor: " + northBascAngle)
+        serial.writeLine("South Angle Sensor: " + southBascAngle)
 
 
         //poll motor current sense
@@ -144,6 +149,24 @@ namespace towerBridge {
         if (southBascAngle <= basculeLowerLimit && southMotorSpeed < 0) setSouthMotorSpeed(0)
         if (southBascAngle >= basculeUpperLimit && southMotorSpeed > 0) setSouthMotorSpeed(0)
 
+
+        let currentEastBreakbeamState = pins.digitalReadPin(EAST_BREAKBEAM_PIN) == 0
+        let currentWestBreakbeamState = pins.digitalReadPin(WEST_BREAKBEAM_PIN) == 0
+        if (shipTransittingBridge) {
+            if (!(currentEastBreakbeamState || currentWestBreakbeamState)) shipTransittingBridge = false
+        }else{
+            if (currentEastBreakbeamState) {
+                lastShipTransitDirection = ShipTransitDirection.Upriver
+                shipTransittingBridge = true
+            } else if (currentWestBreakbeamState) {
+                lastShipTransitDirection = ShipTransitDirection.Downriver
+                shipTransittingBridge = true
+            }
+        }
+        prevEastBreakbeamState = currentEastBreakbeamState
+        prevWestBreakbeamState = currentWestBreakbeamState
+        //the commented out line below this is used for testing that the control loop is running properly/being invoked by the scheduler correctly
+        // music.play(music.tonePlayable(262, music.beat(BeatFraction.Whole)), music.PlaybackMode.UntilDone)
         basic.pause(24) //run monitoring loop at ~42Hz (every 4 scheduler cycles when not interrupted)
     })
 
@@ -361,8 +384,14 @@ namespace towerBridge {
     //% weight=84
     //% side.defl=BreakbeamSide.East
     export function isBeamBroken(side?: BreakbeamSide): boolean {
-        //TODO
-        return true
+        switch (side) {
+            case BreakbeamSide.West:
+                return prevWestBreakbeamState
+                break
+            case BreakbeamSide.East:
+                return prevEastBreakbeamState
+                break
+        }
     }
 
     /**
@@ -443,7 +472,7 @@ namespace towerBridge {
      * Get the hue reading the color sensor on the north-west side of the bridge is seeing
      */
     //% blockId=towerbridge_color_sensor_reading_hue
-    //% block=hue seen"
+    //% block="hue seen"
     //% group="Colour Sensor"
     //% weight=84
     export function getColorSensorReadingHue(): number {
@@ -454,7 +483,7 @@ namespace towerBridge {
      * Get the saturation reading the color sensor on the north-west side of the bridge is seeing
      */
     //% blockId=towerbridge_color_sensor_reading_sat
-    //% block=saturation seen"
+    //% block="saturation seen"
     //% group="Colour Sensor"
     //% weight=84
     export function getColorSensorReadingSaturation(): number {
@@ -465,7 +494,7 @@ namespace towerBridge {
      * Get the value reading the color sensor on the north-west side of the bridge is seeing
      */
     //% blockId=towerbridge_color_sensor_reading_val
-    //% block=value seen"
+    //% block="value seen"
     //% group="Colour Sensor"
     //% weight=84
     export function getColorSensorReadingValue(): number {
@@ -476,7 +505,7 @@ namespace towerBridge {
      * Get the brightness reading the color sensor on the north-west side of the bridge is seeing
      */
     //% blockId=towerbridge_color_sensor_reading_brightness
-    //% block=total brightness seen"
+    //% block="total brightness seen"
     //% group="Colour Sensor"
     //% weight=84
     export function getColorSensorReadingBrightness(): number {
@@ -497,7 +526,7 @@ namespace towerBridge {
      * @param value value to set lighting to
      */
     //% blockId=towerbridge_set_tower_color_hsv
-    //% block="set the $side tower lighting to $color"
+    //% block="set the $side tower lighting|hue to $hue|saturation to $saturation|value to $value"
     //% side.defl=BridgeSide.Left
     //% hue.min=0 hue.max=255 hue.defl=170
     //% saturation.min=0 saturation.max=255 saturation.defl=170
@@ -514,7 +543,7 @@ namespace towerBridge {
      * @param color color to set lighting to
      */
     //% blockId=towerbridge_set_tower_color
-    //% block="set the $side tower lighting to $color"
+    //% block="set the $side tower lighting color to $color"
     //% side.defl=BridgeSide.Left
     //% color.shadow="colorNumberPicker"
     //% group="Lighting"
@@ -529,7 +558,7 @@ namespace towerBridge {
      * @param brightness brightness to set lighting to
      */
     //% blockId=towerbridge_set_tower_brightness
-    //% block="set the $side tower lighting to $color"
+    //% block="set the $side tower lighting brightness to $brightness"
     //% side.defl=BridgeSide.Left
     //% brightness.min=0 brightness.max=255 brightness.defl=100
     //% group="Lighting"
