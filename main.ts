@@ -40,7 +40,7 @@ enum ColorSensorColor {
 namespace towerBridge {
 
     let basculeLowerLimit = -15
-    let basculeUpperLimit = 75
+    let basculeUpperLimit = 65
 
     let basculeLowerThresh = 0
     let basculeUpperThresh = basculeUpperLimit - 5
@@ -260,7 +260,27 @@ namespace towerBridge {
     }
 
     /**
-     * Move a bascule to a specific angle in degrees.
+     * Stops a bascule moving (sets it's speed to 0)
+     * @param side side of bridge to set
+     */
+    //% blockId=towerbridge_stop_basule
+    //% block="stop moving the $side bascule"
+    //% group="Bridge"
+    //% weight=90
+    //% side.defl=BridgeSide.Left
+    export function stopBasculeMoving(side?: BridgeSide): void {
+        switch (side) {
+            case BridgeSide.Left:
+                setSouthMotorSpeed(0)
+                break
+            case BridgeSide.Right:
+                setNorthMotorSpeed(0)
+                break
+        }
+    }
+
+    /**
+     * Move a bascule to a specific angle in degrees. (and wait to continue until finished)
      * @param side side of the bridge to set
      * @param angle angle in degrees, eg: 45
      */
@@ -276,7 +296,7 @@ namespace towerBridge {
     }
 
     /**
-     * Move the bascule an amount of degrees relative to it's current angle.
+     * Move the bascule an amount of degrees relative to it's current angle. (and wait to continue until finished)
      * @param side side of the bridge to set
      * @param angle angle in degrees, eg: 45
      */
@@ -564,6 +584,7 @@ namespace towerBridge {
     //% weight=86
     export function setTowerLightingColorHex(side?: BridgeSide, color?: number): void {
         //TODO
+        let RGBcolor = [color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF]
     }
 
     /**
