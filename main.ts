@@ -108,6 +108,20 @@ namespace towerBridge {
     let prevEastBreakbeamState = false
     let prevWestBreakbeamState = false
 
+    let buttonAStillBound = false
+    let prevButtonAState = false
+    input.onButtonPressed(Button.A, function () {
+        buttonAStillBound = true
+        //this will bind this code to button A being pressed, but then user code can easily override this binding
+        //TODO
+        //I need to figure out exactly how the default behavior will work
+        //could do something where we use this event to "sense" if it's still bound when the button is first pressed
+        //and then in the main polling loop can just move if buttons are still unbound
+        //yeahhhh
+        //this will set a flag that will get set back to false on falling edge of the button in the polling loop
+        //and then if that flag isn't set manual mode doesn't work
+    })
+
     //main monitoring loop
     basic.forever(function () {
         //code in here will run within the fibre scheduler, scheduled cooperatively, with a 6ms polling time
