@@ -201,9 +201,9 @@ function setSouthMotorSpeed(speed: number) {
     setMotorSpeed(speed, SIN1, SIN2)
 }
 
-//% weight=100 color=#0066AA icon="" block="Bascules"
-//% groups='["Motors","Sensors"]'
-namespace bascules {
+//% weight=100 color=#0066AA icon="" block="Bascule Motors"
+//% groups='["Motors"]'
+namespace basculeMotors {
 
     /**
      * Set a bascule to a specific speed
@@ -328,7 +328,11 @@ namespace bascules {
     }
 
 
+}
 
+//% weight=100 color=#4a27b3 icon="⭐️" block="Bascule Sensors"
+//% groups='["Angle Sensors"]'
+namespace angleSensors {
 
     /**
      * Returns true if the bascule is in/close enough to the raised or lowered position
