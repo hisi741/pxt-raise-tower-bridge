@@ -201,7 +201,7 @@ function setSouthMotorSpeed(speed: number) {
     setMotorSpeed(speed, SIN1, SIN2)
 }
 
-//% weight=100 color=#0066AA icon="\uf21a" block="Bascule Motors"
+//% weight=100 color=#CC4202 icon="\uf21a" block="Bascule Motors"
 //% groups='["Motors"]'
 namespace basculeMotors {
 
@@ -330,7 +330,7 @@ namespace basculeMotors {
 
 }
 
-//% weight=100 color=#4a27b3 icon="\uf200" block="Bascule Sensors"
+//% weight=100 color=#F99423 icon="\uf200" block="Bascule Sensors"
 //% groups='["Angle Sensors"]'
 namespace angleSensors {
 
@@ -413,7 +413,7 @@ namespace angleSensors {
 
 }
 
-//% weight=100 color=#F99423 icon="\uf024" block="Bridge Sensors"
+//% weight=100 color=#04BD70 icon="\uf024" block="Bridge Sensors"
 //% groups='["Break-beam Sensors", "Colour Sensor"]'
 namespace bridgeSensors {
 
