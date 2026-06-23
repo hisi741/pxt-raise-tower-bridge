@@ -12,6 +12,29 @@ enum BasculeDirection {
     Lower
 }
 
+enum BreakbeamSide {
+    //% block="west"
+    West,
+    //% block="east"
+    East
+}
+
+enum ShipTransitDirection {
+    //% block="upriver"
+    Upriver,
+    //% block="downriver"
+    Downriver
+}
+
+enum ColorSensorColor {
+    //% block="red"
+    Red,
+    //% block="green"
+    Green,
+    //% block="blue"
+    Blue,
+} //TODO idk there's probably more colors or something
+
 //% weight=100 color=#0066AA icon="" block="Tower Bridge"
 //% groups='["Bridge","Sensors"]'
 namespace towerBridge {
@@ -26,8 +49,8 @@ namespace towerBridge {
     let PWR_IMON_PIN = AnalogPin.P0
     let NORTH_IMON_PIN = AnalogPin.P1
     let SOUTH_IMON_PIN = AnalogPin.P2
-    let SENSE2_PIN = AnalogPin.P3
-    let SENSE1_PIN = AnalogPin.P4
+    let SENSE2_PIN = AnalogPin.P3 //east breakbeam
+    let SENSE1_PIN = AnalogPin.P4 //west breakbeam
     let N_BASC_LED_PIN = DigitalPin.P6
     let N_TOWER_LED_PIN = DigitalPin.P7
     let SIN2 = DigitalPin.P8
@@ -76,6 +99,9 @@ namespace towerBridge {
 
     let northMotorSpeed = 0
     let southMotorSpeed = 0
+
+    let shipTransittingBridge = false //TODO implement
+    let lastShipTransitDirection = ShipTransitDirection.Upriver //TODO implement
 
     //main monitoring loop
     basic.forever(function () {
@@ -321,5 +347,97 @@ namespace towerBridge {
         //TODO
         return true
     }
+
+
+
+
+
+    /**
+     * Returns true if the infrared beam between the two piers is interrupted by some object
+     */
+    //% blockId=towerbridge_is_beam_broken
+    //% block="$side break-beam is broken"
+    //% group="Break-beam Sensors"
+    //% weight=84
+    //% side.defl=BreakbeamSide.East
+    export function isBeamBroken(side?: BreakbeamSide): boolean {
+        //TODO
+        return true
+    }
+
+    /**
+     * Returns true if a ship is either waiting or actively transitting the Bridge
+     * this is an additional layer of abstraction, based on if either breakbeam was tripped and both haven't gone yet
+     */
+    //% blockId=towerbridge_is_ship_present
+    //% block="ship is passing through bridge"
+    //% group="Break-beam Sensors"
+    //% weight=84
+    export function isShipPresent(): boolean {
+        return shipTransittingBridge
+    }
+
+    /**
+     * Returns which direction the current/most recent ship that transitted through the bridge went in
+     * this is an additional layer of abstraction, based on which breakbeam was tripped first
+     */
+    //% blockId=towerbridge_get_ship_transit_direction
+    //% block="most recent ship transit direction"
+    //% group="Break-beam Sensors"
+    //% weight=84
+    export function getShipTransitDirection(): ShipTransitDirection {
+        return lastShipTransitDirection
+    }
+
+
+    //TODO I'm sure there's a better way to expose enums to blocks but I can't figure out what it is
+    /**
+     * Returns the Upriver enum, for checking against getShipTransitDirection
+     */
+    //% blockId=towerbridge_upriver_enum
+    //% block="upriver"
+    //% group="Break-beam Sensors"
+    //% weight=84
+    export function upriver(): ShipTransitDirection {
+        return ShipTransitDirection.Upriver
+    }
+
+    /**
+     * Returns the Downriver enum, for checking against getShipTransitDirection
+     */
+    //% blockId=towerbridge_downriver_enum
+    //% block="downriver"
+    //% group="Break-beam Sensors"
+    //% weight=84
+    export function downriver(): ShipTransitDirection {
+        return ShipTransitDirection.Downriver
+    }
+
+
+
+
+    /**
+     * Get which color the color sensor on the north-west side of the bridge is seeing
+     */
+    //% blockId=towerbridge_color_sensor_reading
+    //% block="colour seen"
+    //% group="Colour Sensor"
+    //% weight=84
+    export function getColorSensorReading(): ColorSensorColor {
+        return ColorSensorColor.Red //TODO implement
+    }
+
+    //TODO again there's surely a better way to expose these enums but idk what it is
+    /**
+     * Get a color to compare a color sensor reading against
+     */
+    //% blockId=towerbridge_color_enum
+    //% block="$color"
+    //% group="Colour Sensor"
+    //% weight=84
+    export function getColor(color: ColorSensorColor): ColorSensorColor {
+        return color
+    }
+
 
 }
