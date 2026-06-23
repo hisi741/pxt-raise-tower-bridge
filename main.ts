@@ -35,175 +35,175 @@ enum ColorSensorColor {
     Blue = 0x0000FF,
 } //TODO idk there's probably more colors or something
 
-//% weight=100 color=#0066AA icon="" block="Tower Bridge"
-//% groups='["Bridge","Sensors"]'
-namespace towerBridge {
+let basculeLowerLimit = -15
+let basculeUpperLimit = 65
 
-    let basculeLowerLimit = -15
-    let basculeUpperLimit = 65
+let basculeLowerThresh = 0
+let basculeUpperThresh = basculeUpperLimit - 5
 
-    let basculeLowerThresh = 0
-    let basculeUpperThresh = basculeUpperLimit - 5
+//pindefs.h memorial let statements
+let PWR_IMON_PIN = AnalogPin.P0
+let NORTH_IMON_PIN = AnalogPin.P1
+let SOUTH_IMON_PIN = AnalogPin.P2
+let SENSE2_PIN = AnalogPin.P3 //east breakbeam
+let SENSE1_PIN = AnalogPin.P4 //west breakbeam
+let N_BASC_LED_PIN = DigitalPin.P6
+let N_TOWER_LED_PIN = DigitalPin.P7
+let SIN2 = DigitalPin.P8
+let SIN1 = DigitalPin.P9
+let LOWTRIP_PIN = DigitalPin.P10
+let S_BASC_LED_PIN = DigitalPin.P12
+let S_TOWER_LED_PIN = DigitalPin.P13
+let NIN2 = DigitalPin.P14
+let LED_TX_PIN = DigitalPin.P15 //CTX/COPI pin of the SPI peripheral
+let NIN1 = DigitalPin.P16
+//I2C pins left unassigned because they are configured by the I2C peripheral
 
-    //pindefs.h memorial let statements
-    let PWR_IMON_PIN = AnalogPin.P0
-    let NORTH_IMON_PIN = AnalogPin.P1
-    let SOUTH_IMON_PIN = AnalogPin.P2
-    let SENSE2_PIN = AnalogPin.P3 //east breakbeam
-    let SENSE1_PIN = AnalogPin.P4 //west breakbeam
-    let N_BASC_LED_PIN = DigitalPin.P6
-    let N_TOWER_LED_PIN = DigitalPin.P7
-    let SIN2 = DigitalPin.P8
-    let SIN1 = DigitalPin.P9
-    let LOWTRIP_PIN = DigitalPin.P10
-    let S_BASC_LED_PIN = DigitalPin.P12
-    let S_TOWER_LED_PIN = DigitalPin.P13
-    let NIN2 = DigitalPin.P14
-    let LED_TX_PIN = DigitalPin.P15 //CTX/COPI pin of the SPI peripheral
-    let NIN1 = DigitalPin.P16
-    //I2C pins left unassigned because they are configured by the I2C peripheral
+let EAST_BREAKBEAM_PIN = SENSE2_PIN
+let WEST_BREAKBEAM_PIN = SENSE1_PIN
 
-    let EAST_BREAKBEAM_PIN = SENSE2_PIN
-    let WEST_BREAKBEAM_PIN = SENSE1_PIN
+let muxI2CAddr: uint8 = 0x70
+let encoderI2CAddr: uint8 = 0x36
+let colorI2CAddr: uint8 = 0x44 //0x52
 
-    let muxI2CAddr: uint8 = 0x70
-    let encoderI2CAddr: uint8 = 0x36
-    let colorI2CAddr: uint8 = 0x44 //0x52
+let northEncoderChannel = 0
+let southEncoderChannel = 1
 
-    let northEncoderChannel = 0
-    let southEncoderChannel = 1
+function swapBytes(value: NumberFormat.UInt16LE) {
+    return ((value & 0xFF00) >> 8) | ((value & 0x00FF) << 8)
+}
 
-    function swapBytes(value: NumberFormat.UInt16LE) {
-        return ((value & 0xFF00) >> 8) | ((value & 0x00FF) << 8)
-    }
+function setEncoderChannel(channel: number) { //this also implicitly enables the color sensor channel, since there's no address conflict so that should always be enabled
+    pins.i2cWriteNumber(muxI2CAddr, channel == 0 ? 0b0101 : 0b0110, NumberFormat.UInt8LE, false)
+}
 
-    function setEncoderChannel(channel: number) { //this also implicitly enables the color sensor channel, since there's no address conflict so that should always be enabled
-        pins.i2cWriteNumber(muxI2CAddr, channel == 0 ? 0b0101 : 0b0110, NumberFormat.UInt8LE, false)
-    }
+//configures I2C mux for correct encoder channel, then polls that encoder
+function pollEncoderRawAngle(channel: number) {
+    setEncoderChannel(channel)
+    pins.i2cWriteNumber(encoderI2CAddr, 0x0C, NumberFormat.UInt8LE, true)
+    let rawAngle = pins.i2cReadNumber(encoderI2CAddr, NumberFormat.UInt16LE, false)
+    rawAngle = ((rawAngle & 0xFF00) >> 8) | ((rawAngle & 0x000F) << 8)
+    return (rawAngle / 4096.0) * 360.0
+}
 
-    //configures I2C mux for correct encoder channel, then polls that encoder
-    function pollEncoderRawAngle(channel: number) {
-        setEncoderChannel(channel)
-        pins.i2cWriteNumber(encoderI2CAddr, 0x0C, NumberFormat.UInt8LE, true)
-        let rawAngle = pins.i2cReadNumber(encoderI2CAddr, NumberFormat.UInt16LE, false)
-        rawAngle = ((rawAngle & 0xFF00) >> 8) | ((rawAngle & 0x000F) << 8)
-        return (rawAngle / 4096.0) * 360.0
-    }
+//returns the current drawn from the polled motor in milliamps
+function pollMotorMilliamps(pin: number) {
+    return pins.analogReadPin(pin) * (3.3 / 1024.0) * (700.0 / 2.5) //10bit ADC, 700mA/2.5V VREF
+}
 
-    //returns the current drawn from the polled motor in milliamps
-    function pollMotorMilliamps(pin: number) {
-        return pins.analogReadPin(pin) * (3.3 / 1024.0) * (700.0 / 2.5) //10bit ADC, 700mA/2.5V VREF
-    }
+let northBascAngle = 0
+let southBascAngle = 0
+let northMotorMilliamps = 0
+let southMotorMilliamps = 0
 
-    let northBascAngle = 0
-    let southBascAngle = 0
-    let northMotorMilliamps = 0
-    let southMotorMilliamps = 0
+let northMotorSpeed = 0
+let southMotorSpeed = 0
 
-    let northMotorSpeed = 0
-    let southMotorSpeed = 0
+let shipTransittingBridge = false
+let lastShipTransitDirection = ShipTransitDirection.Upriver
+let prevEastBreakbeamState = false
+let prevWestBreakbeamState = false
 
-    let shipTransittingBridge = false
-    let lastShipTransitDirection = ShipTransitDirection.Upriver
-    let prevEastBreakbeamState = false
-    let prevWestBreakbeamState = false
+let buttonAStillBound = false
+let prevButtonAState = false
+input.onButtonPressed(Button.A, function () {
+    buttonAStillBound = true
+    //this will bind this code to button A being pressed, but then user code can easily override this binding
+    //TODO
+    //I need to figure out exactly how the default behavior will work
+    //could do something where we use this event to "sense" if it's still bound when the button is first pressed
+    //and then in the main polling loop can just move if buttons are still unbound
+    //yeahhhh
+    //this will set a flag that will get set back to false on falling edge of the button in the polling loop
+    //and then if that flag isn't set manual mode doesn't work
+})
 
-    let buttonAStillBound = false
-    let prevButtonAState = false
-    input.onButtonPressed(Button.A, function () {
-        buttonAStillBound = true
-        //this will bind this code to button A being pressed, but then user code can easily override this binding
-        //TODO
-        //I need to figure out exactly how the default behavior will work
-        //could do something where we use this event to "sense" if it's still bound when the button is first pressed
-        //and then in the main polling loop can just move if buttons are still unbound
-        //yeahhhh
-        //this will set a flag that will get set back to false on falling edge of the button in the polling loop
-        //and then if that flag isn't set manual mode doesn't work
-    })
+//main monitoring loop
+basic.forever(function () {
+    //code in here will run within the fibre scheduler, scheduled cooperatively, with a 6ms polling time
+    /*
+    TODO:
+     ~~poll encoders~~
+     ~~poll motor current sense~~
+     ~~turn off motors if encoders over limit in either direction~~
+     ~~set LEDs if encoders over limit in either direction~~
+     maybe write hiccup timer code for if lowtrip isn't enabled and current is over limit (not sure exactly what the best logic for this would be, will probably write this once we have final model assembled)
+     */
 
-    //main monitoring loop
-    basic.forever(function () {
-        //code in here will run within the fibre scheduler, scheduled cooperatively, with a 6ms polling time
-        /*
-        TODO:
-         ~~poll encoders~~
-         ~~poll motor current sense~~
-         ~~turn off motors if encoders over limit in either direction~~
-         ~~set LEDs if encoders over limit in either direction~~
-         maybe write hiccup timer code for if lowtrip isn't enabled and current is over limit (not sure exactly what the best logic for this would be, will probably write this once we have final model assembled)
-         */
+    //poll encoders
+    //TODO check encoder angle processing/conversion logic
+    //from raw 0-360 angles:
+    //south bascule starts at 270, negative bascule rot is positive
+    //north bascule starts at 90, positive bascule rot is positive
+    //same pole of magnet should always face forwards/backwards relative to bascule, on both sides (and then magnet polarity is essentially flipped for north/south)
+    northBascAngle = pollEncoderRawAngle(northEncoderChannel) - 90
+    southBascAngle = (360 - pollEncoderRawAngle(southEncoderChannel)) - 90
 
-        //poll encoders
-        //TODO check encoder angle processing/conversion logic
-        //from raw 0-360 angles:
-        //south bascule starts at 270, negative bascule rot is positive
-        //north bascule starts at 90, positive bascule rot is positive
-        //same pole of magnet should always face forwards/backwards relative to bascule, on both sides (and then magnet polarity is essentially flipped for north/south)
-        northBascAngle = pollEncoderRawAngle(northEncoderChannel) - 90
-        southBascAngle = (360 - pollEncoderRawAngle(southEncoderChannel)) - 90
-
-        serial.writeLine("North Angle Sensor: " + northBascAngle)
-        serial.writeLine("South Angle Sensor: " + southBascAngle)
+    serial.writeLine("North Angle Sensor: " + northBascAngle)
+    serial.writeLine("South Angle Sensor: " + southBascAngle)
 
 
-        //poll motor current sense
-        northMotorMilliamps = pollMotorMilliamps(NORTH_IMON_PIN)
-        southMotorMilliamps = pollMotorMilliamps(SOUTH_IMON_PIN)
+    //poll motor current sense
+    northMotorMilliamps = pollMotorMilliamps(NORTH_IMON_PIN)
+    southMotorMilliamps = pollMotorMilliamps(SOUTH_IMON_PIN)
 
-        //set collision warning LEDs
-        pins.digitalWritePin(N_BASC_LED_PIN, + (northBascAngle <= basculeLowerLimit)) //world's dumbest boolean to integer cast
-        pins.digitalWritePin(N_TOWER_LED_PIN, + (northBascAngle >= basculeUpperLimit))
-        pins.digitalWritePin(S_BASC_LED_PIN, + (southBascAngle <= basculeLowerLimit))
-        pins.digitalWritePin(S_TOWER_LED_PIN, + (southBascAngle >= basculeUpperLimit))
+    //set collision warning LEDs
+    pins.digitalWritePin(N_BASC_LED_PIN, + (northBascAngle <= basculeLowerLimit)) //world's dumbest boolean to integer cast
+    pins.digitalWritePin(N_TOWER_LED_PIN, + (northBascAngle >= basculeUpperLimit))
+    pins.digitalWritePin(S_BASC_LED_PIN, + (southBascAngle <= basculeLowerLimit))
+    pins.digitalWritePin(S_TOWER_LED_PIN, + (southBascAngle >= basculeUpperLimit))
 
-        //stop motors from moving if they've hit limits and are moving in the wrong direction
-        if (northBascAngle <= basculeLowerLimit && northMotorSpeed < 0) setNorthMotorSpeed(0)
-        if (northBascAngle >= basculeUpperLimit && northMotorSpeed > 0) setNorthMotorSpeed(0)
-        if (southBascAngle <= basculeLowerLimit && southMotorSpeed < 0) setSouthMotorSpeed(0)
-        if (southBascAngle >= basculeUpperLimit && southMotorSpeed > 0) setSouthMotorSpeed(0)
+    //stop motors from moving if they've hit limits and are moving in the wrong direction
+    if (northBascAngle <= basculeLowerLimit && northMotorSpeed < 0) setNorthMotorSpeed(0)
+    if (northBascAngle >= basculeUpperLimit && northMotorSpeed > 0) setNorthMotorSpeed(0)
+    if (southBascAngle <= basculeLowerLimit && southMotorSpeed < 0) setSouthMotorSpeed(0)
+    if (southBascAngle >= basculeUpperLimit && southMotorSpeed > 0) setSouthMotorSpeed(0)
 
 
-        let currentEastBreakbeamState = pins.digitalReadPin(EAST_BREAKBEAM_PIN) == 0
-        let currentWestBreakbeamState = pins.digitalReadPin(WEST_BREAKBEAM_PIN) == 0
-        if (shipTransittingBridge) {
-            if (!(currentEastBreakbeamState || currentWestBreakbeamState)) shipTransittingBridge = false
-        }else{
-            if (currentEastBreakbeamState) {
-                lastShipTransitDirection = ShipTransitDirection.Upriver
-                shipTransittingBridge = true
-            } else if (currentWestBreakbeamState) {
-                lastShipTransitDirection = ShipTransitDirection.Downriver
-                shipTransittingBridge = true
-            }
-        }
-        prevEastBreakbeamState = currentEastBreakbeamState
-        prevWestBreakbeamState = currentWestBreakbeamState
-        //the commented out line below this is used for testing that the control loop is running properly/being invoked by the scheduler correctly
-        // music.play(music.tonePlayable(262, music.beat(BeatFraction.Whole)), music.PlaybackMode.UntilDone)
-        basic.pause(24) //run monitoring loop at ~42Hz (every 4 scheduler cycles when not interrupted)
-    })
-
-    function setMotorSpeed(speed: number, IN1: number, IN2: number) {
-        let PWMvalue = Math.clamp(-100, 100, speed) * (1024.0 / 100.0)
-        if (speed > 0) {
-            pins.analogWritePin(IN1, PWMvalue)
-            pins.digitalWritePin(IN2, 0)
-        } else {
-            pins.digitalWritePin(IN1, 0)
-            pins.analogWritePin(IN2, PWMvalue)
+    let currentEastBreakbeamState = pins.digitalReadPin(EAST_BREAKBEAM_PIN) == 0
+    let currentWestBreakbeamState = pins.digitalReadPin(WEST_BREAKBEAM_PIN) == 0
+    if (shipTransittingBridge) {
+        if (!(currentEastBreakbeamState || currentWestBreakbeamState)) shipTransittingBridge = false
+    } else {
+        if (currentEastBreakbeamState) {
+            lastShipTransitDirection = ShipTransitDirection.Upriver
+            shipTransittingBridge = true
+        } else if (currentWestBreakbeamState) {
+            lastShipTransitDirection = ShipTransitDirection.Downriver
+            shipTransittingBridge = true
         }
     }
+    prevEastBreakbeamState = currentEastBreakbeamState
+    prevWestBreakbeamState = currentWestBreakbeamState
+    //the commented out line below this is used for testing that the control loop is running properly/being invoked by the scheduler correctly
+    // music.play(music.tonePlayable(262, music.beat(BeatFraction.Whole)), music.PlaybackMode.UntilDone)
+    basic.pause(24) //run monitoring loop at ~42Hz (every 4 scheduler cycles when not interrupted)
+})
 
-    function setNorthMotorSpeed(speed: number) {
-        northMotorSpeed = speed
-        setMotorSpeed(speed, NIN1, NIN2)
+function setMotorSpeed(speed: number, IN1: number, IN2: number) {
+    let PWMvalue = Math.clamp(-100, 100, speed) * (1024.0 / 100.0)
+    if (speed > 0) {
+        pins.analogWritePin(IN1, PWMvalue)
+        pins.digitalWritePin(IN2, 0)
+    } else {
+        pins.digitalWritePin(IN1, 0)
+        pins.analogWritePin(IN2, PWMvalue)
     }
+}
 
-    function setSouthMotorSpeed(speed: number) {
-        southMotorSpeed = speed
-        setMotorSpeed(speed, SIN1, SIN2)
-    }
+function setNorthMotorSpeed(speed: number) {
+    northMotorSpeed = speed
+    setMotorSpeed(speed, NIN1, NIN2)
+}
+
+function setSouthMotorSpeed(speed: number) {
+    southMotorSpeed = speed
+    setMotorSpeed(speed, SIN1, SIN2)
+}
+
+//% weight=100 color=#0066AA icon="" block="Bascules"
+//% groups='["Motors","Sensors"]'
+namespace bascules {
 
     /**
      * Set a bascule to a specific speed
@@ -212,13 +212,13 @@ namespace towerBridge {
      */
     //% blockId=towerbridge_set_bascule_speed
     //% block="set the $side bascule to speed $speed"
-    //% group="Bridge"
+    //% group="Motors"
     //% weight=90
     //% side.defl=BridgeSide.Left
     //% speed.min=-100 speed.max=100 speed.defl=0
     //% speed.shadow="speedPicker"
     export function setBasculeMotorSpeed(side?: BridgeSide, speed?: number): void {
-        switch (side){
+        switch (side) {
             case BridgeSide.Left:
                 setSouthMotorSpeed(speed)
                 break
@@ -235,7 +235,7 @@ namespace towerBridge {
      */
     //% blockId=towerbridge_set_bascule_direction
     //% block="start $direction -ing the $side bascule"
-    //% group="Bridge"
+    //% group="Motors"
     //% weight=90
     //% side.defl=BridgeSide.Left
     //% direction.defl=BasculeDirection.Raise
@@ -265,7 +265,7 @@ namespace towerBridge {
      */
     //% blockId=towerbridge_stop_basule
     //% block="stop moving the $side bascule"
-    //% group="Bridge"
+    //% group="Motors"
     //% weight=90
     //% side.defl=BridgeSide.Left
     export function stopBasculeMoving(side?: BridgeSide): void {
@@ -288,7 +288,7 @@ namespace towerBridge {
     //% block="move $side bascule to %angle °"
     //% side.defl=BridgeSide.Left
     //% angle.min=-15 angle.max=86 angle.defl=0
-    //% group="Bridge"
+    //% group="Motors"
     //% weight=86
     export function moveBasculeTo(side?: BridgeSide, angle?: number): void {
         //note that we (tragically) can't use the protractor shadow picker for this block because that is hardcoded 0-180
@@ -304,7 +304,7 @@ namespace towerBridge {
     //% block="move $side bascule %angle ° from it's current angle"
     //% side.defl=BridgeSide.Left
     //% angle.min=-15 angle.max=86 angle.defl=0
-    //% group="Bridge"
+    //% group="Motors"
     //% weight=86
     export function moveBasculeForDegrees(side?: BridgeSide, angle?: number): void {
         //note that we (tragically) can't use the protractor shadow picker for this block because that is hardcoded 0-180
@@ -318,7 +318,7 @@ namespace towerBridge {
      */
     //% blockId=towerbridge_raise_lower_bascule
     //% block="$direction the $side bascule"
-    //% group="Bridge"
+    //% group="Motors"
     //% weight=90
     //% side.defl=BridgeSide.Left
     //% direction.defl=BasculeDirection.Raise
@@ -407,7 +407,11 @@ namespace towerBridge {
 
 
 
+}
 
+//% weight=100 color=#F99423 icon="" block="Bridge Sensors"
+//% groups='["Break-beam Sensors", "Colour Sensor"]'
+namespace bridgeSensors {
 
     /**
      * Returns true if the infrared beam between the two piers is interrupted by some object
@@ -549,7 +553,11 @@ namespace towerBridge {
 
 
 
+}
 
+//% weight=100 color=#4a27b3 icon="⭐️" block="Bridge Lighting"
+//% groups='["Lighting"]'
+namespace bridgeLighting {
 
 
     /**
