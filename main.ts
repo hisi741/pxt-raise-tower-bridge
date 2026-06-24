@@ -19,7 +19,7 @@ enum BreakbeamSide {
     East
 }
 
-enum ShipTransitDirection {
+enum ShipSailingDirection {
     //% block="upriver"
     Upriver,
     //% block="downriver"
@@ -100,7 +100,7 @@ let northMotorSpeed = 0
 let southMotorSpeed = 0
 
 let shipTransittingBridge = false
-let lastShipTransitDirection = ShipTransitDirection.Upriver
+let lastShipTransitDirection = ShipSailingDirection.Upriver
 let prevEastBreakbeamState = false
 let prevWestBreakbeamState = false
 
@@ -117,6 +117,9 @@ input.onButtonPressed(Button.A, function () {
     //this will set a flag that will get set back to false on falling edge of the button in the polling loop
     //and then if that flag isn't set manual mode doesn't work
 })
+
+setEncoderChannel(0) //need to enable the color sensor I2C channel by calling this once before configuring the color sensor
+ColorSensor.configureColorSensor()
 
 //main monitoring loop
 basic.forever(function () {
@@ -166,10 +169,10 @@ basic.forever(function () {
         if (!(currentEastBreakbeamState || currentWestBreakbeamState)) shipTransittingBridge = false
     } else {
         if (currentEastBreakbeamState) {
-            lastShipTransitDirection = ShipTransitDirection.Upriver
+            lastShipTransitDirection = ShipSailingDirection.Upriver
             shipTransittingBridge = true
         } else if (currentWestBreakbeamState) {
-            lastShipTransitDirection = ShipTransitDirection.Downriver
+            lastShipTransitDirection = ShipSailingDirection.Downriver
             shipTransittingBridge = true
         }
     }
@@ -201,6 +204,7 @@ function setSouthMotorSpeed(speed: number) {
     setMotorSpeed(speed, SIN1, SIN2)
 }
 
+//contrast ratio 4.65:1, passes WebAIM accessibility AA but not AAA
 //% weight=100 color=#CC4202 icon="\uf21a" block="Bascule Motors"
 //% groups='["Motors"]'
 namespace basculeMotors {
@@ -330,7 +334,8 @@ namespace basculeMotors {
 
 }
 
-//% weight=100 color=#F99423 icon="\uf200" block="Bascule Sensors"
+//contrast ratio 2.47:1, doesn't meet standards for text but all other oranges are worse for contrast to bascule motors and I want them to still be thematically linked
+//% weight=100 color=#ED8909 icon="\uf200" block="Bascule Sensors"
 //% groups='["Angle Sensors"]'
 namespace angleSensors {
 
@@ -386,12 +391,12 @@ namespace angleSensors {
     /**
      * Returns true if the angle sensor has detected the presence of the magnet, indicating the bascule is seated
      */
-    //% blockId=towerbridge_is_bascule_present
-    //% block="$side bascule is present"
+    //% blockId=towerbridge_is_bascule_inserted
+    //% block="$side bascule is inserted"
     //% group="Angle Sensors"
     //% weight=84
     //% side.defl=BridgeSide.Left
-    export function isBasculePresent(side?: BridgeSide): boolean {
+    export function isBasculeInserted(side?: BridgeSide): boolean {
         //TODO
         return true
     }
@@ -413,7 +418,8 @@ namespace angleSensors {
 
 }
 
-//% weight=100 color=#04BD70 icon="\uf024" block="Bridge Sensors"
+//contrast ratio 3.31:1, only meets large text AA but again anything else doesn't give it enough contrast to the other block types so calling it good enough
+//% weight=100 color=#0AA042 icon="\uf024" block="Bridge Sensors"
 //% groups='["Break-beam Sensors", "Colour Sensor"]'
 namespace bridgeSensors {
 
@@ -441,7 +447,7 @@ namespace bridgeSensors {
      * this is an additional layer of abstraction, based on if either breakbeam was tripped and both haven't gone yet
      */
     //% blockId=towerbridge_is_ship_present
-    //% block="ship is passing through bridge"
+    //% block="ship is sailing through bridge"
     //% group="Break-beam Sensors"
     //% weight=84
     export function isShipPresent(): boolean {
@@ -449,105 +455,74 @@ namespace bridgeSensors {
     }
 
     /**
-     * Returns which direction the current/most recent ship that transitted through the bridge went in
+     * Check which direction the current/most recent ship that sailed through the bridge went in, returns true if that is the direction the ship is sailing
      * this is an additional layer of abstraction, based on which breakbeam was tripped first
      */
-    //% blockId=towerbridge_get_ship_transit_direction
-    //% block="most recent ship transit direction"
+    //% blockId=towerbridge_check_ship_transit_direction
+    //% block="ship is sailing $direction"
     //% group="Break-beam Sensors"
     //% weight=84
-    export function getShipTransitDirection(): ShipTransitDirection {
+    export function checkShipSailingDirection(direction: ShipSailingDirection): boolean {
+        return lastShipTransitDirection == direction
+    }
+
+    /**
+     * Get which direction the current/most recent ship that sailed through the bridge went in
+     * this is an additional layer of abstraction, based on which breakbeam was tripped first
+     */
+    export function getShipSailingDirection(): ShipSailingDirection {
         return lastShipTransitDirection
     }
-
-
-    //TODO I'm sure there's a better way to expose enums to blocks but I can't figure out what it is
-    /**
-     * Returns the Upriver enum, for checking against getShipTransitDirection
-     */
-    //% blockId=towerbridge_upriver_enum
-    //% block="upriver"
-    //% group="Break-beam Sensors"
-    //% weight=84
-    export function upriver(): ShipTransitDirection {
-        return ShipTransitDirection.Upriver
-    }
-
-    /**
-     * Returns the Downriver enum, for checking against getShipTransitDirection
-     */
-    //% blockId=towerbridge_downriver_enum
-    //% block="downriver"
-    //% group="Break-beam Sensors"
-    //% weight=84
-    export function downriver(): ShipTransitDirection {
-        return ShipTransitDirection.Downriver
-    }
-
-
-
 
     /**
      * Get which color the color sensor on the north-west side of the bridge is seeing
      */
     //% blockId=towerbridge_color_sensor_reading
-    //% block="colour seen"
+    //% block="colour"
     //% group="Colour Sensor"
     //% weight=84
     export function getColorSensorReading(): ColorSensorColor {
         return ColorSensorColor.Red //TODO implement
     }
 
-    //TODO again there's surely a better way to expose these enums but idk what it is
     /**
-     * Get a color to compare a color sensor reading against
+     * Check a color against the color sensor, returns true if it is seeing that color
      */
-    //% blockId=towerbridge_color_enum
-    //% block="$color"
+    //% blockId=towerbridge_color_check
+    //% block="colour sensor is seeing $color"
     //% group="Colour Sensor"
     //% weight=84
-    export function getColor(color: ColorSensorColor): ColorSensorColor {
-        return color
+    export function checkColor(color: ColorSensorColor): boolean {
+        return true //TODO
     }
 
     /**
-     * Get the hue reading the color sensor on the north-west side of the bridge is seeing
+     * Get the hue reading the color sensor on the north-west side of the bridge is seeing, from 0-360 degrees
      */
     //% blockId=towerbridge_color_sensor_reading_hue
-    //% block="hue seen"
+    //% block="hue"
     //% group="Colour Sensor"
     //% weight=84
     export function getColorSensorReadingHue(): number {
-        return 255 //TODO implement
+        return ColorSensor.getHueAngle() //TODO implement
     }
 
     /**
-     * Get the saturation reading the color sensor on the north-west side of the bridge is seeing
+     * Get the saturation reading the color sensor on the north-west side of the bridge is seeing, from 0-255
      */
     //% blockId=towerbridge_color_sensor_reading_sat
-    //% block="saturation seen"
+    //% block="saturation"
     //% group="Colour Sensor"
     //% weight=84
     export function getColorSensorReadingSaturation(): number {
-        return 255 //TODO implement
-    }
-
-    /**
-     * Get the value reading the color sensor on the north-west side of the bridge is seeing
-     */
-    //% blockId=towerbridge_color_sensor_reading_val
-    //% block="value seen"
-    //% group="Colour Sensor"
-    //% weight=84
-    export function getColorSensorReadingValue(): number {
-        return 255 //TODO implement
+        return ColorSensor.getRawSatDist() * (255.0 / 0.4) //TODO implement
     }
 
     /**
      * Get the brightness reading the color sensor on the north-west side of the bridge is seeing
      */
     //% blockId=towerbridge_color_sensor_reading_brightness
-    //% block="total brightness seen"
+    //% block="brightness"
     //% group="Colour Sensor"
     //% weight=84
     export function getColorSensorReadingBrightness(): number {
@@ -559,6 +534,8 @@ namespace bridgeSensors {
 
 }
 
+
+//contrast ratio 9.07:1, passes WebAIM accessibility
 //% weight=100 color=#4a27b3 icon="\uf005" block="Bridge Lighting"
 //% groups='["Lighting"]'
 namespace bridgeLighting {

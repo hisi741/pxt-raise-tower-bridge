@@ -191,18 +191,27 @@ namespace ColorSensor {
         // serial.writeLine("CIEx: " + CIEx)
         // serial.writeLine("CIEy: " + CIEy)
 
-        return [CIEx, CIEy]
+        return [CIEx, CIEy, X, Y, Z, L]
     }
 
-    export function getRawHueAngle(){
+    export function getRawHueAngle() {
         let CIExy = getReadingCIExyChromaticity()
 
         //blue at approx 38 deg, red 276, green 186
         let hueAngle = (Math.atan2(CIExy[0] - 0.3333, CIExy[1] - 0.3333) * 180 / Math.PI) + 180
 
+        // serial.writeLine("hue: " + hueAngle)
+
+        return hueAngle
+    }
+
+    //hue angle, roughly adjusted to match HSL/HSV values
+    export function getHueAngle() {
+        let hueAngle = getRawHueAngle()
+
         hueAngle = 360 - hueAngle
         hueAngle = hueAngle + 278
-        if (hueAngle > 360){
+        if (hueAngle > 360) {
             hueAngle = hueAngle - 360
         }
 
